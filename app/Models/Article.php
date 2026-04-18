@@ -13,13 +13,29 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Article extends Model
+class Article extends Model implements HasMedia
 {
     /** @use HasFactory<ArticleFactory> */
     use HasFactory;
 
+    use InteractsWithMedia;
     use SoftDeletes;
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('cover')->singleFile();
+        $this->addMediaCollection('content');
+    }
+
+    public function coverUrl(): ?string
+    {
+        $media = $this->getFirstMedia('cover');
+
+        return $media?->getUrl();
+    }
 
     protected $fillable = [
         'user_id',

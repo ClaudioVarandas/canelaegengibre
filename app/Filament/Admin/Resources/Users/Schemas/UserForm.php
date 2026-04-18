@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\Users\Schemas;
 
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -39,10 +39,9 @@ class UserForm
                                     ->dehydrated(fn (?string $state) => filled($state))
                                     ->required(fn (string $operation) => $operation === 'create')
                                     ->minLength(8),
-                                FileUpload::make('avatar_path')
+                                SpatieMediaLibraryFileUpload::make('avatar')
+                                    ->collection('avatar')
                                     ->image()
-                                    ->directory('avatars')
-                                    ->disk('public')
                                     ->avatar(),
                                 Textarea::make('bio')
                                     ->rows(4)

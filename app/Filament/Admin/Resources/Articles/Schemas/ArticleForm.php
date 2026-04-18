@@ -10,6 +10,7 @@ use App\Models\Tag;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -72,10 +73,16 @@ class ArticleForm
                                     ->getOptionLabelFromRecordUsing(
                                         fn (Tag $tag) => $tag->translate(app()->getLocale())?->name ?? "#{$tag->id}",
                                     ),
+                                SpatieMediaLibraryFileUpload::make('cover')
+                                    ->collection('cover')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->label('Cover image'),
                                 FileUpload::make('og_image_path')
                                     ->image()
                                     ->directory('og-images')
-                                    ->disk('public'),
+                                    ->disk('public')
+                                    ->label('OG image override'),
                             ]),
                     ]),
             ]);
