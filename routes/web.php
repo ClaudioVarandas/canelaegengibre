@@ -11,7 +11,7 @@ use App\Models\Redirect as LegacyRedirect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->middleware('cache-public:3600')->name('sitemap');
 
 Route::get('/robots.txt', function () {
     $body = "User-agent: *\nDisallow: /admin\nSitemap: ".url('/sitemap.xml')."\n";
@@ -25,7 +25,7 @@ foreach (config('canela.locales') as $locale => $meta) {
     $categoriesPath = $meta['categories_path'];
     $aboutPath = $meta['about_path'];
 
-    Route::middleware('set-locale:'.$locale)
+    Route::middleware(['set-locale:'.$locale, 'cache-public:600'])
         ->prefix($segment)
         ->name(str_replace('_', '-', strtolower($locale)).'.')
         ->group(function () use ($articlesPath, $categoriesPath, $aboutPath): void {
