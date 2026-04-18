@@ -3,8 +3,21 @@
 @section('title', __('About') . ' · Canela e Gengibre')
 
 @section('content')
-    <main class="mx-auto max-w-3xl px-6 py-16" data-locale="{{ app()->getLocale() }}">
-        <h1 class="font-serif text-5xl text-ink">{{ __('About') }}</h1>
-        <p class="mt-6 text-ink/70">{{ __('About the blog') }}</p>
+    <x-header :root-categories="$rootCategories" />
+
+    <main class="mx-auto max-w-3xl px-6 py-20" data-locale="{{ app()->getLocale() }}">
+        <header class="mb-10">
+            <p class="text-sm uppercase tracking-widest text-cinnamon">{{ __('Our story') }}</p>
+            <h1 class="mt-2 font-serif text-5xl text-ink">{{ __('About') }}</h1>
+        </header>
+
+        <div class="prose prose-lg max-w-none text-ink/80">
+            <p>{{ __('Canela e Gengibre is a slow-food, slow-living journal.') }}</p>
+            <p>{{ __('We write about honest recipes, seasonal tables, and the small rituals that make a home.') }}</p>
+        </div>
     </main>
+
+    <x-newsletter />
+
+    <x-footer :root-categories="$rootCategories" />
 @endsection

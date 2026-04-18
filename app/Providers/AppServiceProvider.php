@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use Anthropic\Client as AnthropicClient;
+use App\Models\Category;
 use App\Models\User;
 use App\Services\Translation\ClaudeTranslator;
 use App\Services\Translation\TranslatorContract;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,6 +35,18 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::before(function (User $user): ?bool {
             return $user->hasRole('super-admin') ? true : null;
+        });
+
+        View::composer('*', function ($view): void {
+            if ($view->offsetExists('rootCategories')) {
+                return;
+            }
+            $locale = app()->getLocale();
+            $view->with('rootCategories', Category::query()
+                ->whereNull('parent_id')
+                ->with(['translations' => fn ($q) => $q->where('locale', $locale)])
+                ->orderBy('sort')
+                ->get());
         });
     }
 }
