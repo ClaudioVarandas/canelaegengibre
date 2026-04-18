@@ -6,9 +6,18 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SitemapController;
 use App\Models\Redirect as LegacyRedirect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
+Route::get('/robots.txt', function () {
+    $body = "User-agent: *\nDisallow: /admin\nSitemap: ".url('/sitemap.xml')."\n";
+
+    return response($body, 200, ['Content-Type' => 'text/plain']);
+})->name('robots');
 
 foreach (config('canela.locales') as $locale => $meta) {
     $segment = $meta['segment'];

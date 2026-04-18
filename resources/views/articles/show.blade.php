@@ -1,6 +1,29 @@
 @extends('layouts.app')
 
-@section('title', $translation->title . ' · Canela e Gengibre')
+@section('title', ($translation->meta_title ?: $translation->title) . ' · Canela e Gengibre')
+@section('meta_description', $translation->meta_description ?: Str::limit(strip_tags($translation->excerpt ?? ''), 160))
+@section('og_type', 'article')
+@if ($cover = $article->coverUrl())
+    @section('og_image', $cover)
+@endif
+
+@section('structured_data')
+    @php
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => $translation->title,
+            'description' => $translation->meta_description ?: Str::limit(strip_tags($translation->excerpt ?? ''), 160),
+            'datePublished' => $article->published_at?->toIso8601String(),
+            'dateModified' => $article->updated_at?->toIso8601String(),
+            'author' => $article->author ? ['@type' => 'Person', 'name' => $article->author->name] : null,
+            'image' => $article->coverUrl(),
+            'inLanguage' => str_replace('_', '-', app()->getLocale()),
+        ];
+        $schema = array_filter($schema, fn ($v) => $v !== null);
+    @endphp
+    <script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+@endsection
 
 @section('content')
     <x-header :root-categories="$rootCategories" />

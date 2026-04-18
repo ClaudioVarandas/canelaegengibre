@@ -4,6 +4,26 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Canela e Gengibre')</title>
+    <meta name="description" content="@yield('meta_description', __('A slow-food, slow-living journal from Portugal.'))">
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    @foreach (config('canela.locales') as $locale => $meta)
+        <link rel="alternate" hreflang="{{ str_replace('_', '-', strtolower($locale)) }}"
+              href="{{ url('/'.trim($meta['segment'], '/').'/') }}">
+    @endforeach
+
+    <meta property="og:title" content="@yield('og_title', View::yieldContent('title') ?: 'Canela e Gengibre')">
+    <meta property="og:description" content="@yield('og_description', View::yieldContent('meta_description') ?: __('A slow-food, slow-living journal from Portugal.'))">
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    @hasSection('og_image')
+        <meta property="og:image" content="@yield('og_image')">
+    @endif
+    <meta property="og:locale" content="{{ app()->getLocale() }}">
+    <meta name="twitter:card" content="summary_large_image">
+
+    @yield('structured_data')
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-gradient-to-b from-oat to-[#F3E8D6] font-sans text-ink antialiased">
