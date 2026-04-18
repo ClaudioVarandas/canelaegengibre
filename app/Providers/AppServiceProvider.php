@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use Anthropic\Client as AnthropicClient;
 use App\Models\User;
+use App\Services\Translation\ClaudeTranslator;
+use App\Services\Translation\TranslatorContract;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -12,7 +15,18 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->singleton(AnthropicClient::class, function () {
+            $apiKey = (string) config('services.anthropic.api_key');
+
+            return new AnthropicClient(apiKey: $apiKey);
+        });
+
+        $this->app->singleton(TranslatorContract::class, function ($app) {
+            return new ClaudeTranslator(
+                client: $app->make(AnthropicClient::class),
+                model: (string) config('services.anthropic.model', 'claude-opus-4-7'),
+            );
+        });
     }
 
     public function boot(): void
