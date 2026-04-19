@@ -69,20 +69,25 @@ mysql -u root -p -e "CREATE DATABASE canela_legacy CHARACTER SET utf8 COLLATE ut
 # 5. Migrate the new schema + seed roles
 php artisan migrate --seed
 
-# 6. Load the legacy dump into canela_legacy
+# 6. Link storage/app/public → public/storage so uploaded media is web-served
+php artisan storage:link
+
+# 7. Load the legacy dump into canela_legacy
 mysql -u root -p canela_legacy < database/dumps/canela-2025-12-22.sql
 
-# 7. Import legacy content (users, categories, tags, articles, media)
+# 8. Import legacy content (users, categories, tags, articles, media)
 php artisan canela:import --images=/path/to/legacy/images
 
-# 8. (Optional) Translate pt_PT → pt_BR + en
+# 9. (Optional) Translate pt_PT → pt_BR + en
 php artisan canela:translate --entity=articles    --locales=pt_BR,en
 php artisan canela:translate --entity=categories  --locales=pt_BR,en
 php artisan canela:translate --entity=tags        --locales=pt_BR,en
 
-# 9. Promote the owner account to super-admin (so you can log into /admin)
+# 10. Promote the owner account to super-admin (so you can log into /admin)
 php artisan tinker --execute 'App\Models\User::where("email","cvarandas@gmail.com")->first()->assignRole("super-admin");'
 ```
+
+> **Media storage.** All uploaded files — article covers, inline content images, user avatars — land under `storage/app/public/images/{media-id}/{filename}` and are served at `/storage/images/…`. The `images/` prefix is controlled by `MEDIA_PREFIX=images` in `.env` (set by default). If you change it, existing files need to be moved or re-imported.
 
 ### Running the app
 
@@ -182,9 +187,9 @@ Schema mapping (legacy → new):
 | `roles` + `role_users` | spatie/permission | |
 | `categories.lft/rgt/depth/icon/menu` | — | dropped, only `parent_id` + `sort` kept |
 | `article_types` | — | filtered to type_id=1 (Post) |
-| `articles.state` (tinyint) | `articles.status` (enum) | 0→Draft, 1→Pending, 2→Published |
-| `articles.media_featured` | Spatie media `cover` collection | file copied from `--images` dir |
-| Inline `<img src="/uploads/media/images/…">` | Spatie media `content` collection | auto-copied |
+| `articles.state` (tinyint) | `articles.status` (enum) | Lavalite convention: `state ≥ 1` → `Published`, otherwise `Draft` (confirmed against real data: 140 rows use `state=1`, a couple of edge cases use 0/-1) |
+| `articles.media_featured` | Spatie media `cover` collection | file copied from `--images` dir to `storage/app/public/images/…` |
+| Inline `<img src="/uploads/media/images/…">` | Spatie media `content` collection | auto-copied to the same prefixed folder |
 | `tags.namespace/slug/name/count` | `tags` + `tag_translations` | namespace + count dropped; near-duplicates merged via `TagMergeMap` |
 | `tagged.taggable_type/id/tag_id` | `article_tag` pivot | polymorphism dropped (only articles existed) |
 | — | `redirects` | new table for legacy-path preservation |
@@ -272,6 +277,7 @@ app/
 
 config/
   canela.php                # supported locales + URL segment map
+  media-library.php         # spatie/media-library config (prefix="images", disk="public")
 
 database/
   dumps/                    # legacy SQL (gitignored)
@@ -307,7 +313,7 @@ tests/
 
 ## Known follow-ups
 
-- **Inline content image URLs** — legacy content is sanitized (HTML entities decoded, absolute `canelaegengibre.pt` host stripped), and the actual image files are moved into the spatie `content` media collection. However, the HTML content still references the legacy paths (`/uploads/media/images/…`). A second pass to rewrite each `<img src>` to the new spatie media URL per article is TODO.
+- **Inline content image URLs** — legacy content is sanitized (HTML entities decoded, absolute `canelaegengibre.pt` host stripped), and the actual image files are moved into the spatie `content` media collection (served under `/storage/images/…`). However, the HTML body of each article still references the legacy-style paths (`/uploads/media/images/…`), which now 404. A second pass to rewrite each inline `<img src>` to the new spatie media URL per article is TODO.
 - **Search** — the header search input is visual-only right now (no backend). A small endpoint with Scout (or a simple LIKE query) could ship next.
 - **Comments** — intentionally not implemented (not in the legacy data, not requested).
 - **Multilingual tag/category slugs in production URLs** — already supported by the schema and routes; only needs the translation command to have run against them.
