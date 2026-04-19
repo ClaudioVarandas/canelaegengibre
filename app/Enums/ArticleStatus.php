@@ -28,10 +28,10 @@ enum ArticleStatus: string
 
     public static function fromLegacyState(int $state): self
     {
-        return match ($state) {
-            0 => self::Draft,
-            1 => self::Pending,
-            2 => self::Published,
+        // Legacy Lavalite convention: 1 and 2 are both visible/published states;
+        // 0 and -1 are unpublished/draft/trashed-but-kept.
+        return match (true) {
+            $state >= 1 => self::Published,
             default => self::Draft,
         };
     }

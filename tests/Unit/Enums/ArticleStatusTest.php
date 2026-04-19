@@ -7,10 +7,11 @@ use App\Enums\ArticleStatus;
 it('maps legacy state integers to statuses', function (int $legacy, ArticleStatus $expected): void {
     expect(ArticleStatus::fromLegacyState($legacy))->toBe($expected);
 })->with([
+    [-1, ArticleStatus::Draft],
     [0, ArticleStatus::Draft],
-    [1, ArticleStatus::Pending],
+    [1, ArticleStatus::Published],
     [2, ArticleStatus::Published],
-    [99, ArticleStatus::Draft],
+    [99, ArticleStatus::Published],
 ]);
 
 it('exposes distinct colors per status', function (): void {

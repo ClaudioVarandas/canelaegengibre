@@ -21,8 +21,8 @@ final class HomeController extends Controller
         $heroMain = Article::query()
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
-            ->where('featured', true)
             ->with(['translations' => $translations, 'category.translations' => $translations, 'media'])
+            ->orderByDesc('featured')
             ->orderByDesc('published_at')
             ->first();
 
