@@ -20,6 +20,7 @@ class TagForm
         return $schema
             ->components([
                 Section::make('Translations')
+                    ->columnSpanFull()
                     ->schema([
                         Tabs::make('locales')
                             ->persistTabInQueryString()

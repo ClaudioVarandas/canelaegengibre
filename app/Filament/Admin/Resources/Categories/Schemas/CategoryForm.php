@@ -9,7 +9,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -23,40 +22,38 @@ class CategoryForm
     {
         return $schema
             ->components([
-                Grid::make(['default' => 1, 'lg' => 3])
+                Section::make('Translations')
+                    ->columnSpanFull()
                     ->schema([
-                        Section::make('Translations')
-                            ->columnSpan(['default' => 1, 'lg' => 2])
-                            ->schema([
-                                Tabs::make('locales')
-                                    ->persistTabInQueryString()
-                                    ->tabs(array_map(
-                                        fn (string $locale, array $meta) => Tab::make($meta['label'])
-                                            ->schema(self::localeFields($locale)),
-                                        array_keys(config('canela.locales')),
-                                        config('canela.locales'),
-                                    )),
-                            ]),
+                        Tabs::make('locales')
+                            ->persistTabInQueryString()
+                            ->tabs(array_map(
+                                fn (string $locale, array $meta) => Tab::make($meta['label'])
+                                    ->schema(self::localeFields($locale)),
+                                array_keys(config('canela.locales')),
+                                config('canela.locales'),
+                            )),
+                    ]),
 
-                        Section::make('Hierarchy')
-                            ->columnSpan(1)
-                            ->schema([
-                                Select::make('parent_id')
-                                    ->label('Parent')
-                                    ->options(fn (?Category $record) => Category::query()
-                                        ->when($record, fn ($q) => $q->whereKeyNot($record->id))
-                                        ->whereNull('parent_id')
-                                        ->get()
-                                        ->mapWithKeys(fn (Category $c) => [
-                                            $c->id => $c->translate(config('canela.default_locale'))?->name ?? "#{$c->id}",
-                                        ])
-                                        ->all())
-                                    ->searchable()
-                                    ->nullable(),
-                                TextInput::make('sort')
-                                    ->numeric()
-                                    ->default(0),
-                            ]),
+                Section::make('Hierarchy')
+                    ->columnSpanFull()
+                    ->columns(['default' => 1, 'md' => 2])
+                    ->schema([
+                        Select::make('parent_id')
+                            ->label('Parent')
+                            ->options(fn (?Category $record) => Category::query()
+                                ->when($record, fn ($q) => $q->whereKeyNot($record->id))
+                                ->whereNull('parent_id')
+                                ->get()
+                                ->mapWithKeys(fn (Category $c) => [
+                                    $c->id => $c->translate(config('canela.default_locale'))?->name ?? "#{$c->id}",
+                                ])
+                                ->all())
+                            ->searchable()
+                            ->nullable(),
+                        TextInput::make('sort')
+                            ->numeric()
+                            ->default(0),
                     ]),
             ]);
     }
@@ -85,7 +82,8 @@ class CategoryForm
                 ->maxLength(255),
             Textarea::make($prefix.'description')
                 ->rows(3)
-                ->maxLength(1000),
+                ->maxLength(1000)
+                ->columnSpanFull(),
         ];
     }
 }
