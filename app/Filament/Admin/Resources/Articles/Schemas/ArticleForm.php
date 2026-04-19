@@ -15,7 +15,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -29,61 +28,62 @@ class ArticleForm
     {
         return $schema
             ->components([
-                Grid::make(['default' => 1, 'lg' => 3])
+                Section::make('Translations')
+                    ->columnSpanFull()
                     ->schema([
-                        Section::make('Translations')
-                            ->columnSpan(['default' => 1, 'lg' => 2])
-                            ->schema([
-                                Tabs::make('locales')
-                                    ->persistTabInQueryString()
-                                    ->tabs(array_map(
-                                        fn (string $locale, array $meta) => Tab::make($meta['label'])
-                                            ->schema(self::localeFields($locale)),
-                                        array_keys(config('canela.locales')),
-                                        config('canela.locales'),
-                                    )),
-                            ]),
+                        Tabs::make('locales')
+                            ->persistTabInQueryString()
+                            ->tabs(array_map(
+                                fn (string $locale, array $meta) => Tab::make($meta['label'])
+                                    ->schema(self::localeFields($locale)),
+                                array_keys(config('canela.locales')),
+                                config('canela.locales'),
+                            )),
+                    ]),
 
-                        Section::make('Metadata')
-                            ->columnSpan(1)
-                            ->schema([
-                                Select::make('status')
-                                    ->options(ArticleStatus::class)
-                                    ->default(ArticleStatus::Draft->value)
-                                    ->required(),
-                                Toggle::make('featured'),
-                                DateTimePicker::make('published_at')
-                                    ->seconds(false),
-                                Select::make('user_id')
-                                    ->label('Author')
-                                    ->relationship('author', 'name')
-                                    ->default(fn () => auth()->id())
-                                    ->required()
-                                    ->searchable()
-                                    ->preload(),
-                                Select::make('category_id')
-                                    ->label('Category')
-                                    ->options(fn () => self::categoryOptions())
-                                    ->required()
-                                    ->searchable(),
-                                Select::make('tags')
-                                    ->relationship('tags')
-                                    ->multiple()
-                                    ->preload()
-                                    ->getOptionLabelFromRecordUsing(
-                                        fn (Tag $tag) => $tag->translate(app()->getLocale())?->name ?? "#{$tag->id}",
-                                    ),
-                                SpatieMediaLibraryFileUpload::make('cover')
-                                    ->collection('cover')
-                                    ->image()
-                                    ->imageEditor()
-                                    ->label('Cover image'),
-                                FileUpload::make('og_image_path')
-                                    ->image()
-                                    ->directory('og-images')
-                                    ->disk('public')
-                                    ->label('OG image override'),
-                            ]),
+                Section::make('Metadata')
+                    ->columnSpanFull()
+                    ->columns(['default' => 1, 'md' => 2, 'xl' => 4])
+                    ->schema([
+                        Select::make('status')
+                            ->options(ArticleStatus::class)
+                            ->default(ArticleStatus::Draft->value)
+                            ->required(),
+                        DateTimePicker::make('published_at')
+                            ->seconds(false),
+                        Select::make('user_id')
+                            ->label('Author')
+                            ->relationship('author', 'name')
+                            ->default(fn () => auth()->id())
+                            ->required()
+                            ->searchable()
+                            ->preload(),
+                        Select::make('category_id')
+                            ->label('Category')
+                            ->options(fn () => self::categoryOptions())
+                            ->required()
+                            ->searchable(),
+                        Select::make('tags')
+                            ->relationship('tags')
+                            ->multiple()
+                            ->preload()
+                            ->columnSpan(['default' => 1, 'md' => 2, 'xl' => 2])
+                            ->getOptionLabelFromRecordUsing(
+                                fn (Tag $tag) => $tag->translate(app()->getLocale())?->name ?? "#{$tag->id}",
+                            ),
+                        Toggle::make('featured')
+                            ->inline(false),
+                        SpatieMediaLibraryFileUpload::make('cover')
+                            ->collection('cover')
+                            ->image()
+                            ->imageEditor()
+                            ->label('Cover image')
+                            ->columnSpan(['default' => 1, 'md' => 2, 'xl' => 2]),
+                        FileUpload::make('og_image_path')
+                            ->image()
+                            ->directory('og-images')
+                            ->disk('public')
+                            ->label('OG image override'),
                     ]),
             ]);
     }
