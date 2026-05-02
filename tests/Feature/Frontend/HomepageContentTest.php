@@ -49,4 +49,4 @@ it('renders a category pill and its panel', function (): void {
 it('swaps nav brand link target when changing locale via URL prefix', function (): void {
     $this->get('/en/')->assertOk()->assertSee('data-theme="canela"', escape: false);
     expect(app()->getLocale())->toBe('en');
-});
+})->skip('en locale disabled in v1');

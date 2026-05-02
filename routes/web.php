@@ -20,7 +20,7 @@ Route::get('/robots.txt', function () {
     return response($body, 200, ['Content-Type' => 'text/plain']);
 })->name('robots');
 
-foreach (config('canela.locales') as $locale => $meta) {
+foreach (enabled_locales() as $locale => $meta) {
     $segment = $meta['segment'];
     $articlesPath = $meta['articles_path'];
     $categoriesPath = $meta['categories_path'];

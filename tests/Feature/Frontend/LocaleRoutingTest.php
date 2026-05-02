@@ -17,12 +17,12 @@ it('sets the locale to pt_PT at the unprefixed root', function (): void {
 it('sets the locale to pt_BR on the /pt-br prefix', function (): void {
     $this->get('/pt-br/')->assertOk();
     expect(app()->getLocale())->toBe('pt_BR');
-});
+})->skip('pt_BR locale disabled in v1');
 
 it('sets the locale to en on the /en prefix', function (): void {
     $this->get('/en/')->assertOk();
     expect(app()->getLocale())->toBe('en');
-});
+})->skip('en locale disabled in v1');
 
 it('resolves a pt_PT article at /artigos/{slug}', function (): void {
     $article = Article::factory()->published()->create();
@@ -50,7 +50,7 @@ it('resolves an en article at /en/articles/{slug}', function (): void {
     $this->get('/en/articles/chocolate-cake')
         ->assertOk()
         ->assertSee('Chocolate cake');
-});
+})->skip('en locale disabled in v1');
 
 it('returns 404 for a slug that exists only in a different locale', function (): void {
     $article = Article::factory()->published()->create();

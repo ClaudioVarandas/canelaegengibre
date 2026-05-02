@@ -47,27 +47,14 @@ beforeEach(function (): void {
     }
 });
 
-it('smoke-tests every key frontend route for each locale', function (): void {
+it('smoke-tests every key frontend route for the active locale', function (): void {
     $routes = [
-        // pt_PT (root)
         '/',
         '/artigos',
         '/artigos/bolo-de-chocolate',
         '/categorias/receitas',
         '/sobre',
-        // pt_BR
-        '/pt-br/',
-        '/pt-br/artigos',
-        '/pt-br/artigos/bolo-de-chocolate-br',
-        '/pt-br/categorias/receitas-br',
-        '/pt-br/sobre',
-        // en
-        '/en/',
-        '/en/articles',
-        '/en/articles/chocolate-cake',
-        '/en/category/recipes',
-        '/en/about',
-        // SEO
+        '/pesquisa',
         '/sitemap.xml',
         '/robots.txt',
     ];
@@ -81,11 +68,5 @@ it('opens an article from the homepage hero and reads the article title', functi
         ->click('Bolo de chocolate')
         ->assertPathIs('/artigos/bolo-de-chocolate')
         ->assertSee('Bolo de chocolate')
-        ->assertNoJavascriptErrors();
-});
-
-it('serves the en locale homepage with the english article title', function (): void {
-    visit('/en/')
-        ->assertSee('Chocolate cake')
         ->assertNoJavascriptErrors();
 });

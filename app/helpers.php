@@ -2,6 +2,21 @@
 
 declare(strict_types=1);
 
+if (! function_exists('enabled_locales')) {
+    /**
+     * Return only the locales that are flagged enabled in config/canela.php.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    function enabled_locales(): array
+    {
+        return array_filter(
+            config('canela.locales', []),
+            fn (array $meta): bool => (bool) ($meta['enabled'] ?? true),
+        );
+    }
+}
+
 if (! function_exists('locale_route_for')) {
     /**
      * Generate a URL for a named route in the given locale's route group.

@@ -15,7 +15,7 @@ final class SitemapController extends Controller
     {
         $urls = [];
 
-        foreach (config('canela.locales') as $locale => $meta) {
+        foreach (enabled_locales() as $locale => $meta) {
             $segment = trim($meta['segment'], '/');
             $prefix = $segment === '' ? '' : '/'.$segment;
 

@@ -7,7 +7,7 @@
     <meta name="description" content="@yield('meta_description', __('A slow-food, slow-living journal from Portugal.'))">
     <link rel="canonical" href="{{ url()->current() }}">
 
-    @foreach (config('canela.locales') as $locale => $meta)
+    @foreach (enabled_locales() as $locale => $meta)
         <link rel="alternate" hreflang="{{ str_replace('_', '-', strtolower($locale)) }}"
               href="{{ url('/'.trim($meta['segment'], '/').'/') }}">
     @endforeach

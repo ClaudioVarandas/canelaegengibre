@@ -118,7 +118,7 @@ it('serves the en locale search route', function (): void {
     $this->get('/en/search?q=chocolate')
         ->assertOk()
         ->assertSee('Gluten-free chocolate cake');
-});
+})->skip('en locale disabled in v1');
 
 it('serves the pt_BR locale search route', function (): void {
     $article = Article::factory()->published()->create();
@@ -133,4 +133,4 @@ it('serves the pt_BR locale search route', function (): void {
     $this->get('/pt-br/busca?q=chocolate')
         ->assertOk()
         ->assertSee('Bolo de chocolate brasileiro');
-});
+})->skip('pt_BR locale disabled in v1');

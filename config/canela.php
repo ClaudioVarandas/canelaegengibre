@@ -13,6 +13,7 @@ return [
             'categories_path' => 'categorias',
             'about_path' => 'sobre',
             'search_path' => 'pesquisa',
+            'enabled' => true,
         ],
         'pt_BR' => [
             'label' => 'Português (BR)',
@@ -21,6 +22,7 @@ return [
             'categories_path' => 'categorias',
             'about_path' => 'sobre',
             'search_path' => 'busca',
+            'enabled' => false,
         ],
         'en' => [
             'label' => 'English',
@@ -29,6 +31,7 @@ return [
             'categories_path' => 'category',
             'about_path' => 'about',
             'search_path' => 'search',
+            'enabled' => false,
         ],
     ],
 ];

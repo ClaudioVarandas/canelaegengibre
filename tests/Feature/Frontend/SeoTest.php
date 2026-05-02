@@ -57,8 +57,13 @@ it('emits per-locale meta tags and Article JSON-LD on article show', function ()
 it('emits hreflang alternates on every rendered page', function (): void {
     $response = $this->get('/');
     $response->assertOk();
+    expect($response->getContent())->toContain('hreflang="pt-pt"');
+});
+
+it('omits hreflang for disabled locales', function (): void {
+    $response = $this->get('/');
+    $response->assertOk();
     expect($response->getContent())
-        ->toContain('hreflang="pt-pt"')
-        ->toContain('hreflang="pt-br"')
-        ->toContain('hreflang="en"');
+        ->not->toContain('hreflang="pt-br"')
+        ->not->toContain('hreflang="en"');
 });

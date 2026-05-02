@@ -30,4 +30,4 @@ it('renders the en homepage when articles only have a pt_PT translation', functi
     ]);
 
     $this->get('/en/')->assertOk();
-});
+})->skip('en locale disabled in v1');
