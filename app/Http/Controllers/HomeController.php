@@ -36,10 +36,11 @@ final class HomeController extends Controller
             ->get();
 
         $categoryArticles = $rootCategories->mapWithKeys(function (Category $category): array {
-            $articles = $category->articles()
+            $articles = Article::query()
+                ->whereIn('category_id', $category->descendantIds())
                 ->where('status', ArticleStatus::Published)
                 ->where('published_at', '<=', now())
-                ->with(['translations', 'media'])
+                ->with(['translations', 'category.translations', 'media'])
                 ->orderByDesc('published_at')
                 ->limit(4)
                 ->get();

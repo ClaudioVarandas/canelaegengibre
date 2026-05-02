@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Category extends Model
 {
@@ -41,5 +42,25 @@ class Category extends Model
     {
         return $this->translations->firstWhere('locale', $locale)
             ?? $this->translations->first();
+    }
+
+    /**
+     * @return Collection<int, int>
+     */
+    public function descendantIds(): Collection
+    {
+        $ids = collect([$this->id]);
+        $frontier = [$this->id];
+
+        while ($frontier !== []) {
+            $next = self::query()->whereIn('parent_id', $frontier)->pluck('id');
+            if ($next->isEmpty()) {
+                break;
+            }
+            $ids = $ids->concat($next);
+            $frontier = $next->all();
+        }
+
+        return $ids;
     }
 }

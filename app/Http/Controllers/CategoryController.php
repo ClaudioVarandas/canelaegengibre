@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\ArticleStatus;
+use App\Models\Article;
 use App\Models\CategoryTranslation;
 use Illuminate\Contracts\View\View;
 
@@ -21,11 +22,14 @@ final class CategoryController extends Controller
 
         $category = $translation->category()->with('translations')->firstOrFail();
 
-        $articles = $category->articles()
+        $articles = Article::query()
+            ->whereIn('category_id', $category->descendantIds())
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
             ->with([
-                'translations' => fn ($q) => $q->where('locale', $locale),
+                'translations',
+                'category.translations',
+                'media',
             ])
             ->orderByDesc('published_at')
             ->paginate(12);
