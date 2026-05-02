@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('Search') . ' · Canela e Gengibre')
+@section('robots', 'noindex, follow')
 
 @section('content')
     <x-header :root-categories="$rootCategories" />

@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Enums\ArticleStatus;
 use App\Models\Article;
 use App\Models\Category;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Response;
 
 final class SitemapController extends Controller
@@ -19,13 +20,21 @@ final class SitemapController extends Controller
             $segment = trim($meta['segment'], '/');
             $prefix = $segment === '' ? '' : '/'.$segment;
 
+            $latestPublished = Article::query()
+                ->where('status', ArticleStatus::Published)
+                ->where('published_at', '<=', now())
+                ->whereHas('translations', fn ($q) => $q->where('locale', $locale))
+                ->max('updated_at');
+
             $urls[] = [
                 'loc' => url($prefix === '' ? '/' : $prefix),
+                'lastmod' => $latestPublished ? CarbonImmutable::parse($latestPublished)->toIso8601String() : null,
                 'changefreq' => 'daily',
                 'priority' => '0.9',
             ];
             $urls[] = [
                 'loc' => url($prefix.'/'.$meta['articles_path']),
+                'lastmod' => $latestPublished ? CarbonImmutable::parse($latestPublished)->toIso8601String() : null,
                 'changefreq' => 'daily',
                 'priority' => '0.8',
             ];

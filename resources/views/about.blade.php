@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('title', __('About') . ' · Canela e Gengibre')
+@section('meta_description', 'Conheça a Carla Cerqueira e a história por trás do Canela e Gengibre — receitas, escrita e uma vida mais equilibrada e saborosa.')
+@section('og_image', asset('images/carla.png'))
+@section('og_image_alt', 'Carla Cerqueira')
 
 @section('content')
     <x-header :root-categories="$rootCategories ?? collect()" />

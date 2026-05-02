@@ -3,26 +3,68 @@
 @section('title', ($translation->meta_title ?: $translation->title) . ' · Canela e Gengibre')
 @section('meta_description', $translation->meta_description ?: Str::limit(strip_tags($translation->excerpt ?? ''), 160))
 @section('og_type', 'article')
-@if ($cover = $article->coverUrl())
-    @section('og_image', $cover)
+@php
+    $ogImage = $article->coverUrl('hero') ?: $article->coverUrl();
+@endphp
+@if ($ogImage)
+    @section('og_image', $ogImage)
+    @section('og_image_alt', $translation->title)
 @endif
 
 @section('structured_data')
     @php
-        $schema = [
+        $categoryT = $article->category?->translate(app()->getLocale());
+        $tagNames = $article->tags
+            ->map(fn ($t) => $t->translate(app()->getLocale())?->name)
+            ->filter()
+            ->values()
+            ->all();
+
+        $articleSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'Article',
+            'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => url()->current()],
             'headline' => $translation->title,
             'description' => $translation->meta_description ?: Str::limit(strip_tags($translation->excerpt ?? ''), 160),
             'datePublished' => $article->published_at?->toIso8601String(),
             'dateModified' => $article->updated_at?->toIso8601String(),
             'author' => $article->author ? ['@type' => 'Person', 'name' => $article->author->name] : null,
-            'image' => $article->coverUrl(),
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'Canela e Gengibre',
+                'url' => url('/'),
+            ],
+            'image' => $ogImage ? [$ogImage] : null,
+            'articleSection' => $categoryT?->name,
+            'keywords' => $tagNames !== [] ? implode(', ', $tagNames) : null,
             'inLanguage' => str_replace('_', '-', app()->getLocale()),
         ];
-        $schema = array_filter($schema, fn ($v) => $v !== null);
+        $articleSchema = array_filter($articleSchema, fn ($v) => $v !== null && $v !== '');
+
+        $breadcrumbItems = [
+            ['name' => 'Canela e Gengibre', 'url' => url('/')],
+        ];
+        if ($categoryT) {
+            $breadcrumbItems[] = [
+                'name' => $categoryT->name,
+                'url' => locale_route('categories.show', $categoryT->slug),
+            ];
+        }
+        $breadcrumbItems[] = ['name' => $translation->title, 'url' => url()->current()];
+
+        $breadcrumbSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => array_map(fn (int $i, array $item) => [
+                '@type' => 'ListItem',
+                'position' => $i + 1,
+                'name' => $item['name'],
+                'item' => $item['url'],
+            ], array_keys($breadcrumbItems), $breadcrumbItems),
+        ];
     @endphp
-    <script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+    <script type="application/ld+json">{!! json_encode($articleSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+    <script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 @endsection
 
 @section('content')

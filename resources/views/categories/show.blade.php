@@ -1,6 +1,21 @@
 @extends('layouts.app')
 
 @section('title', $translation->name . ' · Canela e Gengibre')
+@section('meta_description', $translation->description ?: __('Articles in :category', ['category' => $translation->name]))
+
+@section('structured_data')
+    @php
+        $breadcrumbSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Canela e Gengibre', 'item' => url('/')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => $translation->name, 'item' => url()->current()],
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+@endsection
 
 @section('content')
     <x-header :root-categories="$rootCategories" />

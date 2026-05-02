@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', '#' . $translation->name . ' · Canela e Gengibre')
+@section('meta_description', __('Articles tagged :tag', ['tag' => '#'.$translation->name]))
+@section('robots', 'noindex, follow')
 
 @section('content')
     <x-header :root-categories="$rootCategories ?? collect()" />
