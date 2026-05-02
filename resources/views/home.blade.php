@@ -73,8 +73,8 @@
 
             <div class="mt-8 grid">
                 @foreach ($categoryArticles as $entry)
-                    <div :class="active === {{ $entry['category']->id }} ? 'opacity-100' : 'invisible opacity-0'"
-                         class="col-start-1 row-start-1 rounded-3xl border border-ink/5 bg-white p-8 shadow-sm transition-opacity duration-200 sm:p-10">
+                    <div :class="active === {{ $entry['category']->id }} ? 'translate-y-0 opacity-100' : 'invisible translate-y-2 opacity-0'"
+                         class="col-start-1 row-start-1 rounded-3xl border border-ink/5 bg-white p-8 shadow-sm transition-all duration-500 ease-out sm:p-10">
                         @if ($entry['translation'])
                             <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
                                 <div>
