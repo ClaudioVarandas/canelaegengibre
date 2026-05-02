@@ -15,7 +15,7 @@
                     $heroCover = $heroMain->coverUrl();
                 @endphp
                 <a href="{{ locale_route('articles.show', $heroT?->slug) }}"
-                   class="group relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-cinnamon via-cinnamon/90 to-ink p-8 text-oat sm:p-10 lg:aspect-auto lg:h-[600px]">
+                   class="group relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-cinnamon via-cinnamon/90 to-ink p-8 text-oat sm:p-10 lg:aspect-auto lg:h-[460px]">
                     @if ($heroCover)
                         <img src="{{ $heroCover }}" alt="{{ $heroT?->title }}"
                              class="absolute inset-0 h-full w-full object-cover opacity-25 mix-blend-overlay transition duration-1000 group-hover:scale-105 group-hover:opacity-30">
@@ -42,7 +42,7 @@
             @endif
 
             {{-- Right: 4 stacked cards, same height as left --}}
-            <div class="grid grid-rows-4 gap-2 lg:h-[600px]">
+            <div class="grid grid-rows-4 gap-2 lg:h-[460px]">
                 @foreach ($heroRight as $article)
                     <x-article-card :article="$article" compact />
                 @endforeach
