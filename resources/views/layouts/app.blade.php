@@ -30,7 +30,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-gradient-to-b from-oat to-[#F3E8D6] font-sans text-ink antialiased">
+<body class="flex min-h-screen flex-col bg-gradient-to-b from-oat to-[#F3E8D6] font-sans text-ink antialiased">
     @yield('content')
 </body>
 </html>
