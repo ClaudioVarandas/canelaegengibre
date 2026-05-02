@@ -120,7 +120,7 @@ class ImportLegacyCanela extends Command
                 'email' => $row->email,
                 'email_verified_at' => ((int) $row->active === 1) ? $now : null,
                 'bio' => $row->info,
-                'password' => $row->password,
+                'password' => str_replace('\\$', '$', (string) $row->password),
                 'created_at' => $this->parseTimestamp($row->created_at) ?? $now,
                 'updated_at' => $this->parseTimestamp($row->updated_at) ?? $now,
             ]);
