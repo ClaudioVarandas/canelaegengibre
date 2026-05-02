@@ -39,7 +39,6 @@
                                 {{ Str::limit(strip_tags($heroT->excerpt), 160) }}
                             </p>
                         @endif
-                        <span class="btn btn-primary mt-6">{{ __('Read article') }}</span>
                     </div>
                 </a>
             @endif
@@ -109,72 +108,6 @@
             </div>
         </section>
     @endif
-
-    {{-- FEATURED EDITORIAL --}}
-    @if ($editorialMain)
-        <section class="mx-auto mt-24 max-w-7xl px-6">
-            <div class="grid gap-6 lg:grid-cols-3">
-                @php
-                    $emT = $editorialMain->translate(app()->getLocale());
-                    $emCover = $editorialMain->coverUrl();
-                @endphp
-                <a href="{{ route(str_replace('_', '-', strtolower(app()->getLocale())).'.articles.show', $emT?->slug) }}"
-                   class="group relative col-span-2 overflow-hidden rounded-3xl bg-gradient-to-br from-sage via-moss to-ink p-10 text-oat">
-                    @if ($emCover)
-                        <img src="{{ $emCover }}" class="absolute inset-0 h-full w-full object-cover opacity-30 transition duration-1000 group-hover:scale-105 group-hover:opacity-40" alt="">
-                    @endif
-                    <div class="relative">
-                        <span class="badge badge-accent uppercase tracking-widest">{{ __('Editor’s pick') }}</span>
-                        <h2 class="mt-4 font-serif text-4xl leading-tight sm:text-5xl">{{ $emT?->title }}</h2>
-                        @if ($emT?->excerpt)
-                            <p class="mt-4 max-w-xl text-oat/80">{{ Str::limit(strip_tags($emT->excerpt), 200) }}</p>
-                        @endif
-                    </div>
-                </a>
-                <div class="grid gap-4">
-                    @foreach ($editorialSide as $article)
-                        <x-article-card :article="$article" />
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
-
-    {{-- ABOUT + UTILITY --}}
-    <section class="mx-auto mt-24 grid max-w-7xl gap-10 px-6 lg:grid-cols-3">
-        <div class="lg:col-span-2">
-            <h2 class="font-serif text-3xl text-ink">{{ __('About the journal') }}</h2>
-            <p class="mt-4 max-w-2xl text-ink/70">
-                {{ __('Canela e Gengibre is a slow-food, slow-living journal.') }}
-            </p>
-            <a href="{{ route(str_replace('_', '-', strtolower(app()->getLocale())).'.about') }}"
-               class="btn btn-outline btn-secondary mt-6">
-                {{ __('Read more') }}
-            </a>
-        </div>
-        <div class="space-y-6">
-            <label class="input input-bordered flex items-center gap-2 bg-oat/80">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-60" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="7" />
-                    <path d="m21 21-4.3-4.3" />
-                </svg>
-                <input type="search" placeholder="{{ __('Search recipes, ideas…') }}" class="grow bg-transparent">
-            </label>
-            @if ($tags->isNotEmpty())
-                <div class="flex flex-wrap gap-2">
-                    @foreach ($tags as $tag)
-                        @php $tt = $tag->translate(app()->getLocale()); @endphp
-                        @if ($tt)
-                            <span class="badge badge-outline badge-lg">{{ $tt->name }}</span>
-                        @endif
-                    @endforeach
-                </div>
-            @endif
-        </div>
-    </section>
-
-    <x-newsletter />
 
     <x-footer :root-categories="$rootCategories" />
 @endsection

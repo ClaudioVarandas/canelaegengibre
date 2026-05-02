@@ -33,9 +33,6 @@
                     <path d="m21 21-4.3-4.3" />
                 </svg>
             </button>
-            <a href="#newsletter" class="btn btn-primary btn-sm hidden md:inline-flex">
-                {{ __('Subscribe') }}
-            </a>
         </div>
     </div>
 </header>

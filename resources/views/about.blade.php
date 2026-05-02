@@ -17,7 +17,5 @@
         </div>
     </main>
 
-    <x-newsletter />
-
     <x-footer :root-categories="$rootCategories" />
 @endsection

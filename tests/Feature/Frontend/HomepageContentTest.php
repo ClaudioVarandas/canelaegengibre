@@ -31,13 +31,6 @@ it('renders the featured hero article title', function (): void {
         ->assertSee('Receitas');
 });
 
-it('renders the newsletter subscribe form on the homepage', function (): void {
-    $this->get('/')
-        ->assertOk()
-        ->assertSee('id="newsletter"', escape: false)
-        ->assertSee('type="email"', escape: false);
-});
-
 it('renders a category pill and its panel', function (): void {
     $category = Category::factory()->create();
     CategoryTranslation::factory()->create([
