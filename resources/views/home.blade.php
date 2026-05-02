@@ -104,7 +104,7 @@
 
     {{-- LATEST CAROUSEL --}}
     @if ($carousel->isNotEmpty())
-        <section class="mx-auto mt-12 mb-12 max-w-7xl px-6"
+        <section class="mx-auto mt-12 mb-12 w-full min-w-0 max-w-7xl px-6"
                  x-data="{
                      active: 0,
                      pages: 1,

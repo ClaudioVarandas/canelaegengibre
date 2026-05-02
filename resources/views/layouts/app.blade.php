@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="canela">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="canela" class="overflow-x-hidden">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,7 +30,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex min-h-screen flex-col bg-gradient-to-b from-oat to-[#F3E8D6] font-sans text-ink antialiased">
+<body class="flex min-h-screen min-w-0 flex-col overflow-x-hidden bg-gradient-to-b from-oat to-[#F3E8D6] font-sans text-ink antialiased">
     @yield('content')
 </body>
 </html>
