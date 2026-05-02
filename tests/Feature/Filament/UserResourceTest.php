@@ -66,3 +66,14 @@ it('keeps the existing password when password field is blank on edit', function 
 
     expect($target->fresh()->password)->toBe($originalHash);
 });
+
+it('exposes the roles select to super-admin editors', function (): void {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $target = User::factory()->create();
+    $target->assignRole('author');
+
+    $this->actingAs($admin);
+    Livewire::test(EditUser::class, ['record' => $target->getRouteKey()])
+        ->assertFormFieldIsVisible('roles');
+});

@@ -42,7 +42,9 @@ class UserForm
                             ->multiple()
                             ->relationship('roles', 'name')
                             ->preload()
-                            ->searchable(),
+                            ->searchable()
+                            ->visible(fn (): bool => auth()->user()?->hasRole('super-admin') ?? false)
+                            ->dehydrated(fn (): bool => auth()->user()?->hasRole('super-admin') ?? false),
                         SpatieMediaLibraryFileUpload::make('avatar')
                             ->collection('avatar')
                             ->image()
