@@ -11,7 +11,39 @@
         <nav class="hidden items-center gap-8 md:flex">
             @foreach ($rootCategories as $category)
                 @php $t = $category->translate(app()->getLocale()); @endphp
-                @if ($t)
+                @continue (! $t)
+
+                @if ($category->children->isNotEmpty())
+                    <div x-data="{ open: false }"
+                         x-on:mouseenter="open = true"
+                         x-on:mouseleave="open = false"
+                         x-on:click.outside="open = false"
+                         class="relative">
+                        <a href="{{ locale_route_for($t->locale, 'categories.show', $t->slug) }}"
+                           x-on:click="open = false"
+                           class="flex items-center gap-1 text-sm font-medium text-ink/80 transition hover:text-cinnamon">
+                            {{ $t->name }}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2.5" aria-hidden="true"
+                                 :class="{ 'rotate-180': open }" style="transition: transform 150ms;">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </a>
+                        <ul x-show="open" x-transition x-cloak
+                            class="absolute left-1/2 top-full mt-2 w-56 -translate-x-1/2 rounded-2xl border border-ink/5 bg-white p-2 shadow-soft">
+                            @foreach ($category->children as $child)
+                                @php $ct = $child->translate(app()->getLocale()); @endphp
+                                @continue (! $ct)
+                                <li>
+                                    <a href="{{ locale_route_for($ct->locale, 'categories.show', $ct->slug) }}"
+                                       class="block rounded-xl px-3 py-2 text-sm text-ink/80 transition hover:bg-sand hover:text-cinnamon">
+                                        {{ $ct->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @else
                     <a href="{{ locale_route_for($t->locale, 'categories.show', $t->slug) }}"
                        class="text-sm font-medium text-ink/80 transition hover:text-cinnamon">
                         {{ $t->name }}

@@ -45,9 +45,13 @@ class AppServiceProvider extends ServiceProvider
                 return;
             }
             $locale = app()->getLocale();
+            $localeFilter = fn ($q) => $q->where('locale', $locale);
             $view->with('rootCategories', Category::query()
                 ->whereNull('parent_id')
-                ->with(['translations' => fn ($q) => $q->where('locale', $locale)])
+                ->with([
+                    'translations' => $localeFilter,
+                    'children' => fn ($q) => $q->orderBy('sort')->with(['translations' => $localeFilter]),
+                ])
                 ->orderBy('sort')
                 ->get());
         });
