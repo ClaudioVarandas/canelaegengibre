@@ -78,12 +78,16 @@ class ArticleForm
                             ->collection('cover')
                             ->image()
                             ->imageEditor()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->maxSize(4096)
                             ->label('Cover image')
                             ->columnSpan(['default' => 1, 'md' => 2, 'xl' => 2]),
                         FileUpload::make('og_image_path')
                             ->image()
                             ->directory('og-images')
                             ->disk('public')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->maxSize(2048)
                             ->label('OG image override'),
                     ]),
             ]);
@@ -118,6 +122,8 @@ class ArticleForm
                 ->fileAttachmentsDisk('public')
                 ->fileAttachmentsDirectory('articles/inline')
                 ->fileAttachmentsVisibility('public')
+                ->fileAttachmentsAcceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                ->fileAttachmentsMaxSize(4096)
                 ->toolbarButtons([
                     ['bold', 'italic', 'strike', 'link'],
                     ['h2', 'h3'],

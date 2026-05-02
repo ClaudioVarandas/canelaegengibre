@@ -47,6 +47,8 @@ class UserForm
                             ->collection('avatar')
                             ->image()
                             ->avatar()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->maxSize(2048)
                             ->columnSpan(['default' => 1, 'md' => 2, 'xl' => 1]),
                         Textarea::make('bio')
                             ->rows(4)
