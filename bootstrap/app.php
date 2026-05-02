@@ -28,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->isMethod('GET')) {
                 $path = '/'.ltrim($request->path(), '/');
                 $redirect = Redirect::query()->where('from_path', $path)->first();
-                if ($redirect !== null) {
+                if ($redirect !== null && str_starts_with((string) $redirect->to_path, '/')) {
                     return redirect($redirect->to_path, $redirect->code);
                 }
             }

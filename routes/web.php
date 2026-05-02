@@ -47,7 +47,7 @@ Route::fallback(function (Request $request) {
     $path = '/'.ltrim($request->path(), '/');
 
     $redirect = LegacyRedirect::query()->where('from_path', $path)->first();
-    if ($redirect !== null) {
+    if ($redirect !== null && str_starts_with((string) $redirect->to_path, '/')) {
         return redirect($redirect->to_path, $redirect->code);
     }
 

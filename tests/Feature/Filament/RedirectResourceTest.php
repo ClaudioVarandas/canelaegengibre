@@ -55,3 +55,28 @@ it('rejects a duplicate from_path', function (): void {
         ->call('create')
         ->assertHasFormErrors(['from_path']);
 });
+
+it('rejects an external to_path to prevent open redirect abuse', function (): void {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+
+    $this->actingAs($admin);
+    Livewire::test(CreateRedirect::class)
+        ->fillForm([
+            'from_path' => '/artigos/external',
+            'to_path' => 'https://evil.example/phish',
+            'code' => 301,
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['to_path']);
+});
+
+it('does not follow an externally-pointing redirect even if persisted', function (): void {
+    Redirect::factory()->create([
+        'from_path' => '/artigos/legacy-poisoned',
+        'to_path' => 'https://evil.example/phish',
+        'code' => 301,
+    ]);
+
+    $this->get('/artigos/legacy-poisoned')->assertNotFound();
+});

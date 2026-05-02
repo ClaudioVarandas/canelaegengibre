@@ -38,7 +38,9 @@ class RedirectForm
                         TextInput::make('to_path')
                             ->required()
                             ->maxLength(255)
-                            ->helperText('Destination path or absolute URL')
+                            ->regex('/^\//')
+                            ->validationMessages(['regex' => 'Destination must start with "/" — external redirects are not allowed.'])
+                            ->helperText('Internal path only, must start with "/"')
                             ->columnSpanFull(),
                     ]),
             ]);
