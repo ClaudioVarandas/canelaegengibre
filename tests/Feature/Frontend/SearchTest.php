@@ -13,6 +13,29 @@ it('renders the empty state when no query is provided', function (): void {
         ->assertSee('Escreve um termo acima para encontrar artigos.');
 });
 
+it('rejects queries shorter than the min length with a hint', function (): void {
+    $article = Article::factory()->published()->create();
+    ArticleTranslation::factory()->create([
+        'article_id' => $article->id,
+        'locale' => 'pt_PT',
+        'title' => 'Tarte rústica',
+        'slug' => 'tarte-rustica',
+        'excerpt' => 'fácil',
+    ]);
+
+    $this->get('/pesquisa?q=ta')
+        ->assertOk()
+        ->assertDontSee('Tarte rústica')
+        ->assertSee('Indica pelo menos 3 caracteres.');
+});
+
+it('caps query length to prevent abuse', function (): void {
+    $long = str_repeat('a', 200);
+
+    $this->get('/pesquisa?q='.$long)
+        ->assertOk();
+});
+
 it('matches an article by translated title', function (): void {
     $article = Article::factory()->published()->create();
     ArticleTranslation::factory()->create([

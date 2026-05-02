@@ -12,10 +12,15 @@ use Illuminate\Http\Request;
 
 final class SearchController extends Controller
 {
+    private const MIN_QUERY_LENGTH = 3;
+
+    private const MAX_QUERY_LENGTH = 100;
+
     public function index(Request $request): View
     {
         $locale = app()->getLocale();
-        $q = trim((string) $request->query('q', ''));
+        $raw = trim((string) $request->query('q', ''));
+        $q = mb_substr($raw, 0, self::MAX_QUERY_LENGTH);
 
         $translations = fn ($query) => $query->where('locale', $locale);
 
@@ -24,7 +29,9 @@ final class SearchController extends Controller
             ->with(['translations' => $translations])
             ->get();
 
-        if ($q === '') {
+        $tooShort = $q !== '' && mb_strlen($q) < self::MIN_QUERY_LENGTH;
+
+        if ($q === '' || $tooShort) {
             $results = Article::query()->whereRaw('1 = 0')->paginate(12);
         } else {
             $like = '%'.addcslashes($q, '%_\\').'%';
@@ -53,6 +60,8 @@ final class SearchController extends Controller
             'q' => $q,
             'results' => $results,
             'rootCategories' => $rootCategories,
+            'tooShort' => $tooShort,
+            'minLength' => self::MIN_QUERY_LENGTH,
         ]);
     }
 }

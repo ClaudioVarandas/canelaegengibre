@@ -28,6 +28,8 @@
 
         @if ($q === '')
             <p class="text-ink/60">{{ __('Type a query above to find articles.') }}</p>
+        @elseif ($tooShort ?? false)
+            <p class="text-ink/60">{{ __('Please enter at least :min characters.', ['min' => $minLength]) }}</p>
         @elseif ($results->isEmpty())
             <p class="text-ink/60">{{ __('No results for ":query".', ['query' => $q]) }}</p>
         @else

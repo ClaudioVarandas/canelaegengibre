@@ -38,7 +38,10 @@ foreach (enabled_locales() as $locale => $meta) {
             Route::get($articlesPath.'/{slug}', [ArticleController::class, 'show'])->name('articles.show');
             Route::get($categoriesPath.'/{slug}', [CategoryController::class, 'show'])->name('categories.show');
             Route::get($aboutPath, [AboutController::class, 'index'])->name('about');
-            Route::get($searchPath, [SearchController::class, 'index'])->name('search');
+            Route::get($searchPath, [SearchController::class, 'index'])
+                ->withoutMiddleware('cache-public:600')
+                ->middleware('throttle:60,1')
+                ->name('search');
             Route::get($tagsPath.'/{slug}', [TagController::class, 'show'])->name('tags.show');
         });
 }
