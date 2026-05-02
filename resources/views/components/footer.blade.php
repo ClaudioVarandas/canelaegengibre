@@ -7,7 +7,7 @@
             <span class="font-display text-lg text-ink">Canela e Gengibre</span>
         </div>
 
-        <nav class="flex flex-wrap items-center gap-6">
+        <nav class="flex flex-wrap items-center justify-center gap-6 text-center">
             @foreach ($rootCategories as $category)
                 @php $t = $category->translate(app()->getLocale()); @endphp
                 @if ($t)
