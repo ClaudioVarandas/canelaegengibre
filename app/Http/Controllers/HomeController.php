@@ -13,16 +13,10 @@ final class HomeController extends Controller
 {
     public function index(): View
     {
-        $locale = app()->getLocale();
-
-        $translations = fn ($q) => $q->where('locale', $locale);
-        $hasTranslation = fn ($q) => $q->whereHas('translations', $translations);
-
         $heroMain = Article::query()
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
-            ->tap($hasTranslation)
-            ->with(['translations' => $translations, 'category.translations' => $translations, 'media'])
+            ->with(['translations', 'category.translations', 'media'])
             ->orderByDesc('featured')
             ->orderByDesc('published_at')
             ->first();
@@ -30,29 +24,27 @@ final class HomeController extends Controller
         $heroRight = Article::query()
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
-            ->tap($hasTranslation)
             ->when($heroMain, fn ($q) => $q->whereKeyNot($heroMain->id))
-            ->with(['translations' => $translations, 'category.translations' => $translations, 'media'])
+            ->with(['translations', 'category.translations', 'media'])
             ->orderByDesc('published_at')
             ->limit(4)
             ->get();
 
         $rootCategories = Category::query()
             ->whereNull('parent_id')
-            ->with(['translations' => $translations])
+            ->with(['translations'])
             ->get();
 
-        $categoryArticles = $rootCategories->mapWithKeys(function (Category $category) use ($translations, $hasTranslation, $locale): array {
+        $categoryArticles = $rootCategories->mapWithKeys(function (Category $category): array {
             $articles = $category->articles()
                 ->where('status', ArticleStatus::Published)
                 ->where('published_at', '<=', now())
-                ->tap($hasTranslation)
-                ->with(['translations' => $translations, 'media'])
+                ->with(['translations', 'media'])
                 ->orderByDesc('published_at')
                 ->limit(4)
                 ->get();
 
-            $translation = $category->translate($locale);
+            $translation = $category->translate(app()->getLocale());
 
             return [$category->id => [
                 'category' => $category,
@@ -64,8 +56,7 @@ final class HomeController extends Controller
         $carousel = Article::query()
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
-            ->tap($hasTranslation)
-            ->with(['translations' => $translations, 'media'])
+            ->with(['translations', 'media'])
             ->orderByDesc('published_at')
             ->limit(10)
             ->get();

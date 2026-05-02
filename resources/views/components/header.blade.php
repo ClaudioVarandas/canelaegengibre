@@ -12,7 +12,7 @@
             @foreach ($rootCategories as $category)
                 @php $t = $category->translate(app()->getLocale()); @endphp
                 @if ($t)
-                    <a href="{{ locale_route('categories.show', $t->slug) }}"
+                    <a href="{{ locale_route_for($t->locale, 'categories.show', $t->slug) }}"
                        class="text-sm font-medium text-ink/80 transition hover:text-cinnamon">
                         {{ $t->name }}
                     </a>

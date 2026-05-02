@@ -14,7 +14,7 @@
                 $heroCover = $heroMain?->coverUrl();
             @endphp
             @if ($heroMain && $heroT)
-                <a href="{{ locale_route('articles.show', $heroT->slug) }}"
+                <a href="{{ locale_route_for($heroT->locale, 'articles.show', $heroT->slug) }}"
                    class="group relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-cinnamon via-cinnamon/90 to-ink p-8 text-oat sm:p-10 lg:aspect-auto lg:h-[400px]">
                     @if ($heroCover)
                         <img src="{{ $heroCover }}" alt="{{ $heroT->title }}"
@@ -85,7 +85,7 @@
                                         {{ __('Latest articles in :category', ['category' => $entry['translation']->name]) }}
                                     </h3>
                                 </div>
-                                <a href="{{ locale_route('categories.show', $entry['translation']->slug) }}"
+                                <a href="{{ locale_route_for($entry['translation']->locale, 'categories.show', $entry['translation']->slug) }}"
                                    class="text-sm font-medium text-cinnamon hover:underline">
                                     {{ __('See all in this category') }} →
                                 </a>

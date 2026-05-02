@@ -7,7 +7,7 @@
 @endphp
 
 @if ($t)
-<a href="{{ locale_route('articles.show', $t->slug) }}"
+<a href="{{ locale_route_for($t->locale, 'articles.show', $t->slug) }}"
    class="group flex {{ $compact ? 'items-center gap-4 p-4' : 'flex-col gap-4 p-4' }} rounded-2xl bg-white shadow-[0_2px_4px_rgba(31,41,55,0.04),0_14px_32px_-10px_rgba(31,41,55,0.22)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_4px_8px_rgba(31,41,55,0.06),0_28px_56px_-16px_rgba(31,41,55,0.32)]">
     <div class="{{ $compact ? 'h-16 w-16 shrink-0 rounded-xl' : 'aspect-square w-full rounded-2xl' }} overflow-hidden bg-sand">
         @if ($cover)
