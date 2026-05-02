@@ -104,14 +104,79 @@
 
     {{-- LATEST CAROUSEL --}}
     @if ($carousel->isNotEmpty())
-        <section class="mx-auto mt-24 max-w-7xl px-6">
-            <h2 class="font-serif text-3xl text-ink">{{ __('Latest') }}</h2>
-            <div class="carousel carousel-center mt-6 gap-4 rounded-box p-2">
-                @foreach ($carousel as $article)
-                    <div class="carousel-item w-64">
-                        <x-article-card :article="$article" />
-                    </div>
-                @endforeach
+        <section class="mx-auto mt-24 max-w-7xl px-6"
+                 x-data="{
+                     active: 0,
+                     pages: 1,
+                     total: {{ $carousel->count() }},
+                     perPage() {
+                         if (window.innerWidth >= 1024) return 4;
+                         if (window.innerWidth >= 640) return 2;
+                         return 1;
+                     },
+                     init() {
+                         this.recompute();
+                         window.addEventListener('resize', () => this.recompute());
+                         this.$refs.track.addEventListener('scroll', () => this.sync());
+                     },
+                     recompute() {
+                         this.pages = Math.max(1, Math.ceil(this.total / this.perPage()));
+                         this.sync();
+                     },
+                     sync() {
+                         const w = this.$refs.track.clientWidth;
+                         this.active = w > 0 ? Math.round(this.$refs.track.scrollLeft / w) : 0;
+                     },
+                     goto(i) {
+                         const target = Math.max(0, Math.min(this.pages - 1, i));
+                         this.active = target;
+                         this.$refs.track.scrollTo({ left: target * this.$refs.track.clientWidth, behavior: 'smooth' });
+                     }
+                 }">
+            <h2 class="mb-8 font-serif text-3xl text-ink">{{ __('Latest') }}</h2>
+
+            <div class="relative">
+                <div x-ref="track"
+                     class="flex snap-x snap-mandatory scroll-smooth gap-4 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+                    @foreach ($carousel as $article)
+                        <div class="snap-start shrink-0 w-full sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-3rem)/4)]">
+                            <x-article-card :article="$article" />
+                        </div>
+                    @endforeach
+                </div>
+
+                <button type="button"
+                        x-on:click="goto(active - 1)"
+                        :disabled="active === 0"
+                        :class="active === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'"
+                        class="absolute left-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-md ring-1 ring-ink/10 transition hover:bg-cinnamon hover:text-oat md:grid"
+                        aria-label="{{ __('Previous') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="m15 18-6-6 6-6" />
+                    </svg>
+                </button>
+                <button type="button"
+                        x-on:click="goto(active + 1)"
+                        :disabled="active >= pages - 1"
+                        :class="active >= pages - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'"
+                        class="absolute right-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-md ring-1 ring-ink/10 transition hover:bg-cinnamon hover:text-oat md:grid"
+                        aria-label="{{ __('Next') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="m9 18 6-6-6-6" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mt-6 flex items-center justify-center gap-2">
+                <template x-for="i in pages" :key="i">
+                    <button type="button"
+                            x-on:click="goto(i - 1)"
+                            :class="active === i - 1 ? 'w-6 bg-cinnamon' : 'w-2 bg-ink/20 hover:bg-ink/40'"
+                            class="h-2 rounded-full transition-all"
+                            aria-label="{{ __('Go to slide') }}"></button>
+                </template>
             </div>
         </section>
     @endif
