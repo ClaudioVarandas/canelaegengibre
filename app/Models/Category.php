@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class Category extends Model
 {
@@ -44,23 +45,28 @@ class Category extends Model
             ?? $this->translations->first();
     }
 
+    /** @var Collection<int, int>|null */
+    private ?Collection $descendantIdsCache = null;
+
     /**
      * @return Collection<int, int>
      */
     public function descendantIds(): Collection
     {
-        $ids = collect([$this->id]);
-        $frontier = [$this->id];
-
-        while ($frontier !== []) {
-            $next = self::query()->whereIn('parent_id', $frontier)->pluck('id');
-            if ($next->isEmpty()) {
-                break;
-            }
-            $ids = $ids->concat($next);
-            $frontier = $next->all();
+        if ($this->descendantIdsCache !== null) {
+            return $this->descendantIdsCache;
         }
 
-        return $ids;
+        $rows = DB::select(<<<'SQL'
+            WITH RECURSIVE cat_tree AS (
+                SELECT id FROM categories WHERE id = ?
+                UNION ALL
+                SELECT c.id FROM categories c
+                INNER JOIN cat_tree t ON c.parent_id = t.id
+            )
+            SELECT id FROM cat_tree
+        SQL, [$this->id]);
+
+        return $this->descendantIdsCache = collect($rows)->pluck('id');
     }
 }
