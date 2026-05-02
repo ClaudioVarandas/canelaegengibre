@@ -40,7 +40,14 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('super-admin') ? true : null;
         });
 
-        View::composer('*', function ($view): void {
+        View::composer([
+            'home',
+            'about',
+            'search',
+            'articles.show',
+            'categories.show',
+            'tags.show',
+        ], function ($view): void {
             if ($view->offsetExists('rootCategories')) {
                 return;
             }
