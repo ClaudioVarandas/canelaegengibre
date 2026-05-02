@@ -13,10 +13,19 @@ final class HomeController extends Controller
 {
     public function index(): View
     {
+        $enabled = array_keys(enabled_locales());
+        $localeFilter = fn ($q) => $q->whereIn('locale', $enabled);
+
+        $articleEager = [
+            'translations' => $localeFilter,
+            'category.translations' => $localeFilter,
+            'media',
+        ];
+
         $heroMain = Article::query()
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
-            ->with(['translations', 'category.translations', 'media'])
+            ->with($articleEager)
             ->orderByDesc('featured')
             ->orderByDesc('published_at')
             ->first();
@@ -25,22 +34,22 @@ final class HomeController extends Controller
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
             ->when($heroMain, fn ($q) => $q->whereKeyNot($heroMain->id))
-            ->with(['translations', 'category.translations', 'media'])
+            ->with($articleEager)
             ->orderByDesc('published_at')
             ->limit(4)
             ->get();
 
         $rootCategories = Category::query()
             ->whereNull('parent_id')
-            ->with(['translations'])
+            ->with(['translations' => $localeFilter])
             ->get();
 
-        $categoryArticles = $rootCategories->mapWithKeys(function (Category $category): array {
+        $categoryArticles = $rootCategories->mapWithKeys(function (Category $category) use ($articleEager): array {
             $articles = Article::query()
                 ->whereIn('category_id', $category->descendantIds())
                 ->where('status', ArticleStatus::Published)
                 ->where('published_at', '<=', now())
-                ->with(['translations', 'category.translations', 'media'])
+                ->with($articleEager)
                 ->orderByDesc('published_at')
                 ->limit(4)
                 ->get();
@@ -57,7 +66,7 @@ final class HomeController extends Controller
         $carousel = Article::query()
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
-            ->with(['translations', 'media'])
+            ->with(['translations' => $localeFilter, 'category.translations' => $localeFilter, 'media'])
             ->orderByDesc('published_at')
             ->limit(10)
             ->get();
