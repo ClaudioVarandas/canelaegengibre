@@ -8,21 +8,23 @@
 
 @if ($t)
 <a href="{{ locale_route('articles.show', $t->slug) }}"
-   class="group flex {{ $compact ? 'gap-4' : 'flex-col gap-3' }} rounded-2xl bg-base-100/60 p-3 transition hover:bg-base-100">
-    <div class="{{ $compact ? 'h-20 w-24 shrink-0' : 'aspect-[4/3] w-full' }} overflow-hidden rounded-xl bg-sand">
+   class="group flex {{ $compact ? 'items-center gap-4 p-4' : 'flex-col gap-4 p-4' }} rounded-2xl border border-ink/5 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <div class="{{ $compact ? 'h-16 w-16 shrink-0 rounded-xl' : 'aspect-square w-full rounded-2xl' }} overflow-hidden bg-sand">
         @if ($cover)
             <img src="{{ $cover }}" alt="{{ $t->title }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
         @endif
     </div>
-    <div class="flex-1">
+    <div class="flex-1 min-w-0">
         @if ($category)
-            <span class="text-[11px] font-semibold uppercase tracking-widest text-cinnamon">{{ $category->name }}</span>
+            <span class="text-[11px] font-semibold uppercase tracking-[0.18em] text-cinnamon">{{ $category->name }}</span>
         @endif
-        <h3 class="mt-1 {{ $compact ? 'text-base' : 'text-lg' }} font-serif leading-tight text-ink">
+        <h3 class="mt-1 {{ $compact ? 'text-base' : 'text-lg' }} font-serif font-semibold leading-tight text-ink">
             {{ $t->title }}
         </h3>
-        @if (! $compact && $t->excerpt)
-            <p class="mt-2 line-clamp-2 text-sm text-ink/60">{{ Str::limit(strip_tags($t->excerpt), 120) }}</p>
+        @if ($t->excerpt)
+            <p class="mt-1 line-clamp-2 text-sm text-ink/55">
+                {{ Str::limit(strip_tags($t->excerpt), $compact ? 50 : 120) }}
+            </p>
         @endif
     </div>
 </a>
