@@ -8,7 +8,7 @@
     <main class="mx-auto max-w-3xl px-6 py-20" data-locale="{{ app()->getLocale() }}">
         <header class="mb-10">
             <p class="text-sm uppercase tracking-widest text-cinnamon">{{ __('Our story') }}</p>
-            <h1 class="mt-2 font-serif text-5xl text-ink">{{ __('About') }}</h1>
+            <h1 class="mt-2 font-display text-5xl text-ink">{{ __('About') }}</h1>
         </header>
 
         <div class="prose prose-lg max-w-none text-ink/80">

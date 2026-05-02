@@ -8,7 +8,7 @@
     <main class="mx-auto max-w-7xl px-6 py-16">
         <header class="mb-10">
             <p class="text-sm uppercase tracking-widest text-cinnamon">{{ __('Search') }}</p>
-            <h1 class="mt-2 font-serif text-5xl text-ink">{{ __('Search articles') }}</h1>
+            <h1 class="mt-2 font-display text-5xl text-ink">{{ __('Search articles') }}</h1>
 
             <form method="GET" action="{{ locale_route('search') }}" class="mt-8 max-w-xl">
                 <label class="input input-bordered flex items-center gap-3 bg-oat/80">

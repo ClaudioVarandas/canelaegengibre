@@ -3,8 +3,8 @@
 <footer class="bg-white py-12">
     <div class="mx-auto flex max-w-7xl flex-col items-center gap-6 px-6 text-sm text-ink/70 md:flex-row md:justify-between">
         <div class="flex items-center gap-3">
-            <span class="grid h-8 w-8 place-items-center rounded-full bg-cinnamon text-oat font-serif">C</span>
-            <span class="font-serif text-lg text-ink">Canela e Gengibre</span>
+            <span class="grid h-8 w-8 place-items-center rounded-full bg-cinnamon text-oat font-display">C</span>
+            <span class="font-display text-lg text-ink">Canela e Gengibre</span>
         </div>
 
         <nav class="flex flex-wrap items-center gap-6">

@@ -40,7 +40,7 @@
                 @endif
             @endif
 
-            <h1 class="mt-3 font-serif text-5xl leading-tight text-ink">{{ $translation->title }}</h1>
+            <h1 class="mt-3 font-display text-5xl leading-tight text-ink">{{ $translation->title }}</h1>
 
             @if ($translation->excerpt)
                 <p class="mt-6 text-xl text-ink/70">{{ $translation->excerpt }}</p>

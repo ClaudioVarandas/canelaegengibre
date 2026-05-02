@@ -26,7 +26,7 @@
                         </span>
                     </div>
                     <div class="relative">
-                        <h1 class="font-serif text-4xl leading-tight sm:text-5xl">
+                        <h1 class="font-display text-4xl leading-tight sm:text-5xl">
                             {{ $heroT?->title }}
                         </h1>
                         @if ($heroT?->excerpt)
@@ -54,7 +54,7 @@
     @if ($rootCategories->isNotEmpty())
         <section class="mx-auto mt-24 max-w-7xl px-6"
                  x-data="{ active: {{ (int) $rootCategories->first()->id }} }">
-            <h2 class="font-serif text-3xl text-ink">{{ __('Explore by category') }}</h2>
+            <h2 class="font-display text-3xl text-ink">{{ __('Explore by category') }}</h2>
 
             <div class="mt-6 flex flex-wrap gap-3">
                 @foreach ($rootCategories as $category)
@@ -81,7 +81,7 @@
                                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-cinnamon">
                                         {{ __('Active category') }}
                                     </p>
-                                    <h3 class="mt-2 font-serif text-3xl font-semibold text-ink">
+                                    <h3 class="mt-2 font-display text-3xl font-semibold text-ink">
                                         {{ __('Latest articles in :category', ['category' => $entry['translation']->name]) }}
                                     </h3>
                                 </div>
@@ -133,7 +133,7 @@
                          this.$refs.track.scrollTo({ left: target * this.$refs.track.clientWidth, behavior: 'smooth' });
                      }
                  }">
-            <h2 class="mb-8 font-serif text-3xl text-ink">{{ __('Latest') }}</h2>
+            <h2 class="mb-8 font-display text-3xl text-ink">{{ __('Latest') }}</h2>
 
             <div class="relative">
                 <div x-ref="track"

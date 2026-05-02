@@ -1,11 +1,4 @@
 @import 'tailwindcss';
-@import '@fontsource/inter/400.css';
-@import '@fontsource/inter/500.css';
-@import '@fontsource/inter/600.css';
-@import '@fontsource/fraunces/400.css';
-@import '@fontsource/fraunces/500.css';
-@import '@fontsource/fraunces/600.css';
-@import '@fontsource/fraunces/700.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -48,14 +41,15 @@
 }
 
 @theme {
-    --font-sans: 'Inter', system-ui, sans-serif;
-    --font-serif: 'Fraunces', Georgia, serif;
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Fraunces', Georgia, serif;
     --color-cinnamon: #a85b32;
     --color-ginger: #d98c3b;
     --color-oat: #fdf7ef;
     --color-moss: #54624e;
     --color-ink: #1f2937;
-    --color-sand: #e8ddcb;
-    --color-sage: #9da993;
-    --color-olive: #6e7a5f;
+    --color-sand: #f1e6d6;
+    --color-sage: #8faf9a;
+    --color-olive: #6b7d5c;
+    --shadow-soft: 0 10px 30px rgb(31 41 55 / 0.08);
 }

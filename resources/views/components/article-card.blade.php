@@ -18,7 +18,7 @@
         @if ($category)
             <span class="text-[11px] font-semibold uppercase tracking-[0.18em] text-cinnamon">{{ $category->name }}</span>
         @endif
-        <h3 class="mt-1 {{ $compact ? 'text-base' : 'text-lg' }} font-serif font-semibold leading-tight text-ink">
+        <h3 class="mt-1 {{ $compact ? 'text-base' : 'text-lg' }} font-display font-semibold leading-tight text-ink">
             {{ $t->title }}
         </h3>
         @if ($t->excerpt)

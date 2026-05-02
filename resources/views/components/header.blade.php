@@ -4,8 +4,8 @@
     <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <a href="{{ locale_route('home') }}"
            class="flex items-center gap-3">
-            <span class="grid h-10 w-10 place-items-center rounded-full bg-cinnamon text-oat font-serif text-xl">C</span>
-            <span class="font-serif text-2xl text-ink">Canela e Gengibre</span>
+            <span class="grid h-10 w-10 place-items-center rounded-full bg-cinnamon text-oat font-display text-xl">C</span>
+            <span class="font-display text-2xl text-ink">Canela e Gengibre</span>
         </a>
 
         <nav class="hidden items-center gap-8 md:flex">
