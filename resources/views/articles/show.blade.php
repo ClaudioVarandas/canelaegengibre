@@ -65,7 +65,7 @@
         @endif
 
         <div class="prose prose-lg max-w-none text-ink/90 [&_img]:rounded-2xl">
-            {!! $translation->content !!}
+            {!! str($translation->content)->sanitizeHtml() !!}
         </div>
 
         @if ($article->tags->isNotEmpty())
