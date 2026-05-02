@@ -74,7 +74,7 @@
             <div class="mt-8">
                 @foreach ($categoryArticles as $entry)
                     <div x-show="active === {{ $entry['category']->id }}" x-transition
-                         class="rounded-3xl bg-[#f4ebda] p-8 sm:p-10">
+                         class="rounded-3xl border border-ink/5 bg-white p-8 shadow-sm sm:p-10">
                         @if ($entry['translation'])
                             <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
                                 <div>
