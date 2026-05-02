@@ -105,12 +105,14 @@ php artisan tinker --execute 'App\Models\User::where("email","cvarandas@gmail.co
 | `/` | Homepage (pt-PT — default locale, unprefixed) |
 | `/artigos` · `/artigos/{slug}` | Articles listing + single article (pt-PT) |
 | `/categorias/{slug}` | Category listing (pt-PT) |
+| `/tag/{slug}` | Tag listing (pt-PT) |
+| `/pesquisa?q=…` | Search results (pt-PT, throttled 60/min) |
 | `/sobre` | About page (pt-PT) |
-| `/pt-br/…` | Same five routes in Brazilian Portuguese (`/pt-br/artigos/…`, `/pt-br/categorias/…`, `/pt-br/sobre`) |
-| `/en/…` | English (`/en/articles/…`, `/en/category/…`, `/en/about`) |
-| `/admin` | Filament admin panel (login required) |
+| `/pt-br/…` | Same routes in Brazilian Portuguese (`/pt-br/artigos`, `/pt-br/categorias`, `/pt-br/tag`, `/pt-br/busca`, `/pt-br/sobre`) — disabled in v1 |
+| `/en/…` | English (`/en/articles`, `/en/category`, `/en/tag`, `/en/search`, `/en/about`) — disabled in v1 |
+| `/admin` | Filament admin panel (login required, throttled 300/min) |
 | `/sitemap.xml` | Per-locale URL sitemap (1-hour cache) |
-| `/robots.txt` | Allow-all + sitemap pointer, `/admin` disallowed |
+| `/robots.txt` | Dynamic — sitemap pointer, `/admin` disallowed |
 | `/up` | Laravel health endpoint |
 
 ### Console commands
@@ -123,11 +125,12 @@ php artisan tinker --execute 'App\Models\User::where("email","cvarandas@gmail.co
 
 ### Admin (Filament v4)
 
-- **ArticleResource** — per-locale tabs (title, slug, excerpt, content, meta_title, meta_description), status enum (Draft / Pending / Scheduled / Published), featured toggle, author + category selects, tag multi-select, cover upload (media-library), separate OG image override. Authors see only their own articles; super-admins see everything.
+- **ArticleResource** — per-locale tabs (title, slug, excerpt, content, meta_title, meta_description), status enum (Draft / Pending / Scheduled / Published), featured toggle, author + category selects, tag multi-select, cover upload (media-library, MIME-restricted ≤ 4 MB), inline image attachments via `RichEditor` (hardened upload). Authors see only their own articles; super-admins see everything.
 - **CategoryResource** — 2-level tree (parent select), per-locale name/slug/description tabs, super-admin only.
 - **TagResource** — per-locale name/slug tabs, authors can create/edit (so they can tag new articles), no delete.
-- **UserResource** — profile + role multi-select (`spatie/permission`), password optional on edit (hash preserved), avatar via media-library.
-- **RedirectResource** — from_path → to_path with HTTP code (301 / 302 / 307 / 308), super-admin only, unique from_path.
+- **UserResource** — profile + role multi-select (`spatie/permission`), password optional on edit (hash preserved), avatar via media-library. The roles select is gated on the current user holding `super-admin` (visible + dehydrated guard) so authors cannot self-elevate.
+- **RedirectResource** — from_path → to_path with HTTP code (301 / 302 / 307 / 308), super-admin only, unique from_path. `to_path` must start with `/` (server-side regex + open-redirect guard in `bootstrap/app.php`).
+- **Hardening** — entire panel under `throttle:300,1`; the public site adds a `SecurityHeaders` middleware (X-Content-Type-Options, X-Frame-Options, Referrer-Policy, X-Permitted-Cross-Domain-Policies, plus HSTS when HTTPS in production).
 
 ### Frontend theme
 
@@ -143,16 +146,15 @@ Custom DaisyUI theme `canela` in `resources/css/app.css`, mapped to the palette 
 
 Typography: Fraunces for headings, Inter for body. Both bundled, no external CDN.
 
-Homepage composition (per `docs/ideas/template.md`):
+Homepage composition (final shape, after polish rounds):
 
-1. Sticky translucent header (logo · nav · search · subscribe · locale switcher)
-2. **Hero** — 2-column, equal height, `gap-2` (featured article with full-bleed cover + dark overlay on the left, 4 stacked compact cards on the right)
-3. Category pills with Alpine panel swap — preloaded, 4 articles per category
-4. Latest carousel (DaisyUI `carousel-center`)
-5. Featured editorial — big gradient block + 2 supporting cards
-6. About + search + tag cloud
-7. Newsletter on moss→ink gradient
-8. Footer
+1. Sticky translucent header (CG monogram · nav with hover dropdown for sub-categories · inline search field on `md+`, icon-link on mobile · locale switcher)
+2. **Hero** — 60/40 split on `lg+`, ~400px landscape height (cinnamon→ink gradient featured article on the left with a "Featured" pill + "Read article" CTA, 4 stacked compact cards on the right)
+3. Category pills with Alpine panel swap — preloaded, 4 articles per parent category aggregated across descendants, grid-stacked panels for flicker-free transitions
+4. **Latest** carousel — Alpine module (`resources/js/carousel.js`), stride-based scroll-snap, 78% card width on mobile, dot pagination
+5. Footer (sticky to bottom of short pages via `mt-auto`)
+
+Image pipeline: every cover renders through `coverImageAttrs()` which emits `srcset` from spatie media conversions (`thumb 600×450 webp`, `hero 1600×900 webp`) plus a `sizes` hint and `loading="lazy"` (eager + `fetchpriority="high"` only on the hero).
 
 ---
 
@@ -167,9 +169,10 @@ pt-PT lives at the root (so legacy URLs like `canelaegengibre.pt/artigos/{slug}`
 | en | `/en/` | `/en/articles/{slug}` | `/en/category/{slug}` | `/en/about` |
 
 - Slugs are **unique per locale** (not globally) — the translation tables enforce `UNIQUE(locale, slug)`.
+- Locales are gated by `enabled => true` in `config/canela.php`. Disabled locales drop their route group entirely (so `/en/` and `/pt-br/` 404 in v1) and are excluded from `<link rel="alternate" hreflang>`. The default-locale segment also emits an `x-default` alternate.
 - Missing translations return 404 rather than rendering a half-translated fallback.
-- Legacy 404s are caught by a render hook (`bootstrap/app.php`) that checks the `redirects` table and emits a 301/302/307/308 if there's a match.
-- UI strings translated via `lang/pt_PT.json` and `lang/pt_BR.json`; keys fall back to English (source) when missing.
+- Legacy 404s are caught by a render hook (`bootstrap/app.php`) that checks the `redirects` table and emits a 301/302/307/308 if there's a match. Destinations are required to start with `/` to prevent open redirects.
+- UI strings translated via `lang/pt_PT.json` and `lang/pt_BR.json`; keys fall back to English (source) when missing. `pt_PT` falls back to the `pt` directory so vendor (Filament/Laravel) translations resolve.
 
 ---
 
@@ -210,10 +213,11 @@ Import run against the real dump:
 
 Single entry point: `php artisan canela:translate --entity=… --locales=…`.
 
-- The `TranslatorContract` interface is bound to `ClaudeTranslator` in `AppServiceProvider` (container-swappable in tests, see `tests/Support/FakeTranslator.php`).
+- The `TranslatorContract` interface is bound to `ClaudeTranslator` in `AppServiceProvider` (container-swappable in tests, see `tests/Support/FakeTranslator.php` and `tests/Feature/Console/TranslateArticlesTest.php`).
 - `ClaudeTranslator` builds one request per record with `source_locale`, `target_locales`, and a `fields` object; the system prompt (cached via `cache_control: ephemeral`) specifies the preservation rules — keep every HTML tag/attribute intact, translate text nodes only, produce natural pt-BR vocabulary (`café da manhã`, `xícara`, …), editorial English, and per-locale slugs.
 - Model default: `claude-opus-4-7`. Swap via `ANTHROPIC_MODEL=claude-sonnet-4-6` in `.env` for a cheaper pass.
 - The command is idempotent (skips records already having all target locales), supports `--dry-run`, `--limit`, `--article`, and `--entity=articles|categories|tags`.
+- Each record's locale upserts run inside a single `DB::transaction` so partial writes never leave a record half-translated.
 
 Rough cost for 145 articles × 2 locales on Opus 4.7 (input ~2K + output ~4K per call): **~$18** input+output. Sonnet 4.6 is ~1/5 that.
 
@@ -239,17 +243,17 @@ Rough cost for 145 articles × 2 locales on Opus 4.7 (input ~2K + output ~4K per
 
 Coverage snapshot:
 
-| Suite | Count | Examples |
-|---|---|---|
-| Unit | `ArticleStatus` enum, `ContentSanitizer`, `TagMergeMap` | 11 tests |
-| Feature / Frontend | locale routing, homepage content, SEO (sitemap/robots/meta/JSON-LD/hreflang), cache headers | 24 tests |
-| Feature / Filament | admin access gates + every resource (5) with per-locale form fills + policy authorization | 22 tests |
-| Feature / Models | relationships, fallback translation chain, scopes, unique slug-per-locale | 13 tests |
-| Feature / Console | `canela:publish-scheduled`, `canela:translate` (with a `FakeTranslator`) | 6 tests |
-| Feature / Import | fails without `--images`; imports a single article end-to-end (skipped if legacy DB unreachable) | 2 tests |
-| Architecture | no `dd`/`dump`, Controllers extend Controller + suffixed, Models extend Eloquent, Enums are enums, Services namespaced | 5 tests |
-| Browser | 17 routes × `assertNoSmoke()` (no JS errors, no console logs), hero click nav, en locale landing | 3 tests |
-| **Total** | **132 tests / 291 assertions** (7 skipped while pt-BR/en are disabled) | ~10s wall clock |
+| Suite | Examples |
+|---|---|
+| Unit | `ArticleStatus` enum, `ContentSanitizer`, `TagMergeMap`, `ClaudeTranslator` JSON parsing |
+| Feature / Frontend | locale routing (incl. disabled-locale 404s), homepage content, search (min length, throttle, drafts/future filtered, pagination), tag + category pages, SEO (sitemap/robots/meta/JSON-LD/hreflang/x-default), security headers, article XSS regression, cache headers |
+| Feature / Filament | admin access gates + every resource (Articles, Categories, Tags, Users, Redirects) with per-locale form fills + policy authorization + roles-gate guard + open-redirect guard |
+| Feature / Models | relationships, fallback translation chain, scopes, unique slug-per-locale |
+| Feature / Console | `canela:publish-scheduled`, `canela:translate` end-to-end with a fake translator (success, throw, dry-run) |
+| Feature / Import | fails without `--images`; imports a single article end-to-end (skipped if legacy DB unreachable) |
+| Architecture | no `dd`/`dump`, Controllers extend Controller + suffixed, Models extend Eloquent (Concerns excluded), Enums are enums, Services namespaced |
+| Browser | route smoke loop × `assertNoSmoke()` (no JS errors, no console logs), hero click nav |
+| **Total** | **132 tests / 291 assertions** (7 skipped while pt-BR/en are disabled) — ~10s wall clock |
 
 The browser suite uses `pestphp/pest-plugin-browser` + Playwright Chromium. `RefreshDatabase` + sqlite-in-memory keeps each test isolated.
 
@@ -264,19 +268,23 @@ app/
   Filament/Admin/
     Concerns/SyncsTranslations.php
     Resources/              # Article, Category, Tag, User, Redirect
+  Helpers/                  # see app/helpers.php (autoloaded via composer.json)
   Http/
-    Controllers/            # Home, Article, Category, About, Sitemap
-    Middleware/             # SetLocale, CachePublicResponse
+    Controllers/            # Home, Article, Category, Tag, Search, About, Sitemap
+    Middleware/             # SetLocale, CachePublicResponse, SecurityHeaders
   Models/                   # Article, ArticleTranslation, Category, CategoryTranslation,
                             # Tag, TagTranslation, Redirect, User
+    Concerns/               # HasLocaleTranslations trait
   Policies/                 # ArticlePolicy (+ Category/Tag/User/Redirect)
   Providers/                # AppServiceProvider, Filament/AdminPanelProvider
   Services/
     Import/                 # ContentSanitizer, TagMergeMap
     Translation/            # TranslatorContract, ClaudeTranslator
 
+app/helpers.php             # enabled_locales(), locale_route(), locale_route_for()
+
 config/
-  canela.php                # supported locales + URL segment map
+  canela.php                # locale config (default + per-locale URL segments + enabled flag)
   media-library.php         # spatie/media-library config (prefix="images", disk="public")
 
 database/
@@ -287,18 +295,24 @@ database/
   factories/
   seeders/RoleSeeder.php
 
-lang/                       # pt_PT.json, pt_BR.json
+lang/                       # pt_PT.json, pt_BR.json (en falls through to keys)
 
 resources/
   css/app.css               # Tailwind v4 + DaisyUI canela theme + fonts
-  js/app.js                 # Alpine.js
+  js/
+    app.js                  # Alpine entry, registers `carousel` data
+    carousel.js             # Alpine module — stride-based scroll-snap carousel
   views/
-    layouts/app.blade.php   # shell with meta/OG/hreflang
-    components/             # header, footer, newsletter, article-card, locale-switcher
-    home.blade.php
+    layouts/app.blade.php   # shell with meta/OG/hreflang/JSON-LD slot
+    components/             # header (with sub-category dropdown + inline search), footer,
+                            # article-card (responsive srcset + lazy)
+    home.blade.php          # hero + categories + latest carousel
+    search.blade.php
     articles/index, show
     categories/show
-    about
+    tags/show
+    about.blade.php
+    pagination/canela.blade.php  # custom paginator wired in AppServiceProvider
     sitemap.blade.php
 
 routes/
