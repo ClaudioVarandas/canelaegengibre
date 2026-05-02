@@ -13,8 +13,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Article extends Model implements HasMedia
 {
@@ -30,11 +32,55 @@ class Article extends Model implements HasMedia
         $this->addMediaCollection('content');
     }
 
-    public function coverUrl(): ?string
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->fit(Fit::Crop, 600, 450)
+            ->format('webp')
+            ->nonQueued();
+
+        $this->addMediaConversion('hero')
+            ->fit(Fit::Crop, 1600, 900)
+            ->format('webp')
+            ->nonQueued();
+    }
+
+    public function coverUrl(string $conversion = ''): ?string
     {
         $media = $this->getFirstMedia('cover');
+        if ($media === null) {
+            return null;
+        }
 
-        return $media?->getUrl();
+        return $conversion !== '' && $media->hasGeneratedConversion($conversion)
+            ? $media->getUrl($conversion)
+            : $media->getUrl();
+    }
+
+    /**
+     * @return array{src: string, srcset: string, sizes: string}|null
+     */
+    public function coverImageAttrs(string $sizes = '(min-width: 1024px) 50vw, 100vw'): ?array
+    {
+        $media = $this->getFirstMedia('cover');
+        if ($media === null) {
+            return null;
+        }
+
+        $original = $media->getUrl();
+        $thumb = $media->hasGeneratedConversion('thumb') ? $media->getUrl('thumb') : null;
+        $hero = $media->hasGeneratedConversion('hero') ? $media->getUrl('hero') : null;
+
+        $srcset = collect([
+            $thumb ? "{$thumb} 600w" : null,
+            $hero ? "{$hero} 1600w" : null,
+        ])->filter()->implode(', ');
+
+        return [
+            'src' => $hero ?? $original,
+            'srcset' => $srcset,
+            'sizes' => $sizes,
+        ];
     }
 
     protected $fillable = [

@@ -11,13 +11,17 @@
             {{-- Left: featured article --}}
             @php
                 $heroT = $heroMain?->translate(app()->getLocale());
-                $heroCover = $heroMain?->coverUrl();
+                $heroImg = $heroMain?->coverImageAttrs('(min-width: 1024px) 60vw, 100vw');
             @endphp
             @if ($heroMain && $heroT)
                 <a href="{{ locale_route_for($heroT->locale, 'articles.show', $heroT->slug) }}"
                    class="group relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-cinnamon via-cinnamon/90 to-ink p-8 text-oat sm:p-10 lg:aspect-auto lg:h-[400px]">
-                    @if ($heroCover)
-                        <img src="{{ $heroCover }}" alt="{{ $heroT->title }}"
+                    @if ($heroImg)
+                        <img src="{{ $heroImg['src'] }}"
+                             @if ($heroImg['srcset']) srcset="{{ $heroImg['srcset'] }}" sizes="{{ $heroImg['sizes'] }}" @endif
+                             alt="{{ $heroT->title }}"
+                             fetchpriority="high"
+                             decoding="async"
                              class="absolute inset-0 h-full w-full object-cover opacity-25 mix-blend-overlay transition duration-1000 group-hover:scale-105 group-hover:opacity-30">
                     @endif
                     <div class="relative">

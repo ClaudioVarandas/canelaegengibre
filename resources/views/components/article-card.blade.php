@@ -3,15 +3,20 @@
 @php
     $t = $article->translate(app()->getLocale());
     $category = $article->category?->translate(app()->getLocale());
-    $cover = $article->coverUrl();
+    $img = $article->coverImageAttrs($compact ? '64px' : '(min-width: 640px) 25vw, 100vw');
 @endphp
 
 @if ($t)
 <a href="{{ locale_route_for($t->locale, 'articles.show', $t->slug) }}"
    class="group flex {{ $compact ? 'items-center gap-4 p-4' : 'flex-col gap-4 p-4' }} rounded-2xl bg-white shadow-[0_2px_4px_rgba(31,41,55,0.04),0_14px_32px_-10px_rgba(31,41,55,0.22)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_4px_8px_rgba(31,41,55,0.06),0_28px_56px_-16px_rgba(31,41,55,0.32)]">
     <div class="{{ $compact ? 'h-16 w-16 shrink-0 rounded-xl' : 'aspect-[4/3] w-full rounded-2xl sm:aspect-square' }} overflow-hidden bg-sand">
-        @if ($cover)
-            <img src="{{ $cover }}" alt="{{ $t->title }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
+        @if ($img)
+            <img src="{{ $img['src'] }}"
+                 @if ($img['srcset']) srcset="{{ $img['srcset'] }}" sizes="{{ $img['sizes'] }}" @endif
+                 alt="{{ $t->title }}"
+                 loading="lazy"
+                 decoding="async"
+                 class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
         @endif
     </div>
     <div class="flex-1 min-w-0">

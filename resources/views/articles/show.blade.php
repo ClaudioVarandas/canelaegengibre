@@ -58,9 +58,14 @@
             </p>
         </header>
 
-        @if ($cover = $article->coverUrl())
+        @php $heroImg = $article->coverImageAttrs('(min-width: 768px) 768px, 100vw'); @endphp
+        @if ($heroImg)
             <figure class="-mx-6 mb-10 overflow-hidden sm:mx-0 sm:rounded-3xl">
-                <img src="{{ $cover }}" alt="{{ $translation->title }}" class="w-full h-auto">
+                <img src="{{ $heroImg['src'] }}"
+                     @if ($heroImg['srcset']) srcset="{{ $heroImg['srcset'] }}" sizes="{{ $heroImg['sizes'] }}" @endif
+                     alt="{{ $translation->title }}"
+                     decoding="async"
+                     class="w-full h-auto">
             </figure>
         @endif
 
