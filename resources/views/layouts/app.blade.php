@@ -11,6 +11,13 @@
         <link rel="alternate" hreflang="{{ str_replace('_', '-', strtolower($locale)) }}"
               href="{{ url('/'.trim($meta['segment'], '/').'/') }}">
     @endforeach
+    @php
+        $defaultLocale = (string) config('canela.default_locale');
+        $defaultMeta = enabled_locales()[$defaultLocale] ?? null;
+    @endphp
+    @if ($defaultMeta)
+        <link rel="alternate" hreflang="x-default" href="{{ url('/'.trim($defaultMeta['segment'], '/').'/') }}">
+    @endif
 
     <meta property="og:title" content="@yield('og_title', View::yieldContent('title') ?: 'Canela e Gengibre')">
     <meta property="og:description" content="@yield('og_description', View::yieldContent('meta_description') ?: __('A slow-food, slow-living journal from Portugal.'))">
@@ -18,6 +25,10 @@
     <meta property="og:url" content="{{ url()->current() }}">
     @hasSection('og_image')
         <meta property="og:image" content="@yield('og_image')">
+        <meta name="twitter:image" content="@yield('og_image')">
+    @elseif (file_exists(public_path('images/og-default.jpg')))
+        <meta property="og:image" content="{{ asset('images/og-default.jpg') }}">
+        <meta name="twitter:image" content="{{ asset('images/og-default.jpg') }}">
     @endif
     <meta property="og:locale" content="{{ app()->getLocale() }}">
     <meta name="twitter:card" content="summary_large_image">

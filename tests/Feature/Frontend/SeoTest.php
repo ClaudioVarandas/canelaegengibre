@@ -67,3 +67,18 @@ it('omits hreflang for disabled locales', function (): void {
         ->not->toContain('hreflang="pt-br"')
         ->not->toContain('hreflang="en"');
 });
+
+it('emits an x-default hreflang on the homepage', function (): void {
+    $response = $this->get('/');
+    $response->assertOk();
+    expect($response->getContent())->toContain('hreflang="x-default"');
+});
+
+it('emits WebSite + Organization JSON-LD on the homepage', function (): void {
+    $response = $this->get('/');
+    $response->assertOk();
+    expect($response->getContent())
+        ->toContain('"@type":"WebSite"')
+        ->toContain('"@type":"Organization"')
+        ->toContain('"SearchAction"');
+});

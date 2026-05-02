@@ -2,6 +2,33 @@
 
 @section('title', 'Canela e Gengibre')
 
+@section('structured_data')
+    @php
+        $siteJsonLd = [
+            '@context' => 'https://schema.org',
+            '@graph' => [
+                [
+                    '@type' => 'WebSite',
+                    'name' => 'Canela e Gengibre',
+                    'url' => url('/'),
+                    'inLanguage' => str_replace('_', '-', app()->getLocale()),
+                    'potentialAction' => [
+                        '@type' => 'SearchAction',
+                        'target' => locale_route('search').'?q={search_term_string}',
+                        'query-input' => 'required name=search_term_string',
+                    ],
+                ],
+                [
+                    '@type' => 'Organization',
+                    'name' => 'Canela e Gengibre',
+                    'url' => url('/'),
+                ],
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($siteJsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endsection
+
 @section('content')
     <x-header :root-categories="$rootCategories" />
 
