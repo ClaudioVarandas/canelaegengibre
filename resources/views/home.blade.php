@@ -7,7 +7,7 @@
 
     {{-- HERO --}}
     <section class="mx-auto mt-8 max-w-7xl px-6">
-        <div class="grid gap-2 lg:grid-cols-[7fr_3fr]">
+        <div class="grid gap-2 lg:grid-cols-[3fr_2fr]">
             {{-- Left: featured article --}}
             @if ($heroMain)
                 @php
