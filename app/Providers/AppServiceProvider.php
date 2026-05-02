@@ -44,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
             'home',
             'about',
             'search',
+            'articles.index',
             'articles.show',
             'categories.show',
             'tags.show',
