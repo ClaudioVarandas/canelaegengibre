@@ -104,3 +104,13 @@ it('redirects a matching legacy path to the new URL with the configured code', f
 it('returns 404 for paths that do not match any route or redirect', function (): void {
     $this->get('/this/does/not/exist')->assertNotFound();
 });
+
+it('returns 404 on /en/ root while the en locale is disabled', function (): void {
+    $this->get('/en/')->assertNotFound();
+    $this->get('/en/articles/anything')->assertNotFound();
+});
+
+it('returns 404 on /pt-br/ root while the pt_BR locale is disabled', function (): void {
+    $this->get('/pt-br/')->assertNotFound();
+    $this->get('/pt-br/artigos/anything')->assertNotFound();
+});
