@@ -1,6 +1,6 @@
 @props(['rootCategories' => collect()])
 
-<header class="sticky top-0 z-40 bg-oat/70 backdrop-blur-md">
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <a href="{{ locale_route('home') }}"
            class="flex items-center gap-3">
