@@ -11,11 +11,11 @@
             @foreach ($rootCategories as $category)
                 @php $t = $category->translate(app()->getLocale()); @endphp
                 @if ($t)
-                    <a href="{{ route(str_replace('_', '-', strtolower(app()->getLocale())).'.categories.show', $t->slug) }}"
+                    <a href="{{ locale_route('categories.show', $t->slug) }}"
                        class="hover:text-cinnamon">{{ $t->name }}</a>
                 @endif
             @endforeach
-            <a href="{{ route(str_replace('_', '-', strtolower(app()->getLocale())).'.about') }}"
+            <a href="{{ locale_route('about') }}"
                class="hover:text-cinnamon">{{ __('About') }}</a>
         </nav>
 

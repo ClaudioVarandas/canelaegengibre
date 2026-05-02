@@ -2,7 +2,7 @@
 
 <header class="sticky top-0 z-40 bg-oat/70 backdrop-blur-md">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <a href="{{ route(str_replace('_', '-', strtolower(app()->getLocale())).'.home') }}"
+        <a href="{{ locale_route('home') }}"
            class="flex items-center gap-3">
             <span class="grid h-10 w-10 place-items-center rounded-full bg-cinnamon text-oat font-serif text-xl">C</span>
             <span class="font-serif text-2xl text-ink">Canela e Gengibre</span>
@@ -12,13 +12,13 @@
             @foreach ($rootCategories as $category)
                 @php $t = $category->translate(app()->getLocale()); @endphp
                 @if ($t)
-                    <a href="{{ route(str_replace('_', '-', strtolower(app()->getLocale())).'.categories.show', $t->slug) }}"
+                    <a href="{{ locale_route('categories.show', $t->slug) }}"
                        class="text-sm font-medium text-ink/80 transition hover:text-cinnamon">
                         {{ $t->name }}
                     </a>
                 @endif
             @endforeach
-            <a href="{{ route(str_replace('_', '-', strtolower(app()->getLocale())).'.about') }}"
+            <a href="{{ locale_route('about') }}"
                class="text-sm font-medium text-ink/80 transition hover:text-cinnamon">
                 {{ __('About') }}
             </a>

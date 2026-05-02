@@ -3,12 +3,11 @@
 @php
     $t = $article->translate(app()->getLocale());
     $category = $article->category?->translate(app()->getLocale());
-    $route = str_replace('_', '-', strtolower(app()->getLocale())).'.articles.show';
     $cover = $article->coverUrl();
 @endphp
 
 @if ($t)
-<a href="{{ route($route, $t->slug) }}"
+<a href="{{ locale_route('articles.show', $t->slug) }}"
    class="group flex {{ $compact ? 'gap-4' : 'flex-col gap-3' }} rounded-2xl bg-base-100/60 p-3 transition hover:bg-base-100">
     <div class="{{ $compact ? 'h-20 w-24 shrink-0' : 'aspect-[4/3] w-full' }} overflow-hidden rounded-xl bg-sand">
         @if ($cover)

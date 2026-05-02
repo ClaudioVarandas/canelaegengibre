@@ -13,10 +13,9 @@
                 @php
                     $heroT = $heroMain->translate(app()->getLocale());
                     $heroCategory = $heroMain->category?->translate(app()->getLocale());
-                    $heroRoute = str_replace('_', '-', strtolower(app()->getLocale())).'.articles.show';
                     $heroCover = $heroMain->coverUrl();
                 @endphp
-                <a href="{{ route($heroRoute, $heroT?->slug) }}"
+                <a href="{{ locale_route('articles.show', $heroT?->slug) }}"
                    class="group relative overflow-hidden rounded-3xl aspect-[4/5] lg:aspect-auto lg:h-[600px]">
                     @if ($heroCover)
                         <img src="{{ $heroCover }}" alt="{{ $heroT?->title }}"
@@ -78,7 +77,7 @@
                         @if ($entry['translation'])
                             <div class="mb-5 flex items-center justify-between">
                                 <h3 class="font-serif text-2xl text-ink">{{ $entry['translation']->name }}</h3>
-                                <a href="{{ route(str_replace('_', '-', strtolower(app()->getLocale())).'.categories.show', $entry['translation']->slug) }}"
+                                <a href="{{ locale_route('categories.show', $entry['translation']->slug) }}"
                                    class="text-sm font-medium text-cinnamon hover:underline">
                                     {{ __('See all') }} →
                                 </a>

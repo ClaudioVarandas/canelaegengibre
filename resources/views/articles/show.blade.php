@@ -33,7 +33,7 @@
             @if ($article->category)
                 @php $categoryT = $article->category->translate(app()->getLocale()); @endphp
                 @if ($categoryT)
-                    <a href="{{ route(str_replace('_', '-', strtolower(app()->getLocale())).'.categories.show', $categoryT->slug) }}"
+                    <a href="{{ locale_route('categories.show', $categoryT->slug) }}"
                        class="text-xs font-semibold uppercase tracking-widest text-cinnamon hover:underline">
                         {{ $categoryT->name }}
                     </a>
