@@ -73,7 +73,10 @@
                 @foreach ($article->tags as $tag)
                     @php $tt = $tag->translate(app()->getLocale()); @endphp
                     @if ($tt)
-                        <span class="badge badge-outline">{{ $tt->name }}</span>
+                        <a href="{{ locale_route_for($tt->locale, 'tags.show', $tt->slug) }}"
+                           class="rounded-full bg-cinnamon px-3 py-1 text-xs font-medium text-oat transition hover:bg-ink">
+                            #{{ $tt->name }}
+                        </a>
                     @endif
                 @endforeach
             </footer>
