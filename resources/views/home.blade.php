@@ -63,6 +63,7 @@
                     @if ($t)
                         <button type="button"
                                 x-on:click="active = {{ $category->id }}"
+                                :aria-pressed="active === {{ $category->id }} ? 'true' : 'false'"
                                 :class="active === {{ $category->id }} ? 'bg-cinnamon text-oat' : 'bg-base-100 text-ink hover:bg-sand'"
                                 class="rounded-full px-5 py-2 text-sm font-medium transition">
                             {{ $t->name }}
