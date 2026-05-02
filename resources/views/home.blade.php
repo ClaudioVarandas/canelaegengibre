@@ -114,6 +114,10 @@
                          if (window.innerWidth >= 640) return 2;
                          return 1;
                      },
+                     stride() {
+                         const first = this.$refs.track.firstElementChild;
+                         return first ? first.offsetWidth + 16 : this.$refs.track.clientWidth;
+                     },
                      init() {
                          this.recompute();
                          window.addEventListener('resize', () => this.recompute());
@@ -124,13 +128,15 @@
                          this.sync();
                      },
                      sync() {
-                         const w = this.$refs.track.clientWidth;
-                         this.active = w > 0 ? Math.round(this.$refs.track.scrollLeft / w) : 0;
+                         const s = this.stride();
+                         if (s <= 0) { this.active = 0; return; }
+                         const cardIndex = Math.round(this.$refs.track.scrollLeft / s);
+                         this.active = Math.min(this.pages - 1, Math.floor(cardIndex / this.perPage()));
                      },
                      goto(i) {
                          const target = Math.max(0, Math.min(this.pages - 1, i));
                          this.active = target;
-                         this.$refs.track.scrollTo({ left: target * this.$refs.track.clientWidth, behavior: 'smooth' });
+                         this.$refs.track.scrollTo({ left: target * this.stride() * this.perPage(), behavior: 'smooth' });
                      }
                  }">
             <h2 class="mb-8 font-display text-3xl text-ink">{{ __('Latest') }}</h2>
@@ -139,7 +145,7 @@
                 <div x-ref="track"
                      class="flex snap-x snap-mandatory scroll-smooth gap-4 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
                     @foreach ($carousel as $article)
-                        <div class="snap-start shrink-0 w-full sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-3rem)/4)]">
+                        <div class="snap-start shrink-0 w-[78%] sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-3rem)/4)]">
                             <x-article-card :article="$article" />
                         </div>
                     @endforeach
