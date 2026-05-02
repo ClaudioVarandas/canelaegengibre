@@ -8,7 +8,7 @@ A multilingual food & lifestyle journal rebuilt from scratch — Laravel 13 back
 
 - **What:** A Portuguese food/nutrition journal that has existed since 2015. The site is being rebuilt on a modern stack while preserving all content, images, authors, categories, and tags from the legacy MySQL dump.
 - **Why:** Replace the Cartalyst Sentinel / Laravel 5-era codebase with a stack that is easier to maintain, adds a proper admin UI, and scales to three locales (pt-PT as source, plus pt-BR and en).
-- **How:** Test-driven rebuild in 14 steps — scaffold, schema, admin, import, translate, route, theme, SEO, perf. 97 tests (unit, feature, architecture, browser smoke) backing the whole thing.
+- **How:** Test-driven rebuild in 14 steps — scaffold, schema, admin, import, translate, route, theme, SEO, perf. 132 tests (unit, feature, architecture, browser smoke) backing the whole thing.
 
 ---
 
@@ -249,7 +249,7 @@ Coverage snapshot:
 | Feature / Import | fails without `--images`; imports a single article end-to-end (skipped if legacy DB unreachable) | 2 tests |
 | Architecture | no `dd`/`dump`, Controllers extend Controller + suffixed, Models extend Eloquent, Enums are enums, Services namespaced | 5 tests |
 | Browser | 17 routes × `assertNoSmoke()` (no JS errors, no console logs), hero click nav, en locale landing | 3 tests |
-| **Total** | **97 tests / 237 assertions** | ~8s wall clock |
+| **Total** | **132 tests / 291 assertions** (7 skipped while pt-BR/en are disabled) | ~10s wall clock |
 
 The browser suite uses `pestphp/pest-plugin-browser` + Playwright Chromium. `RefreshDatabase` + sqlite-in-memory keeps each test isolated.
 
@@ -311,12 +311,25 @@ tests/
 
 ---
 
+## Production checklist
+
+Before pointing DNS at this build:
+
+1. `.env` — set `APP_ENV=production`, `APP_DEBUG=false`, `APP_KEY=…` (run `php artisan key:generate`), `SESSION_ENCRYPT=true`, `ANTHROPIC_API_KEY=…` only if you'll re-run translations.
+2. `php artisan migrate --force && php artisan db:seed --force` for the role seeder.
+3. `php artisan storage:link`.
+4. `npm ci && npm run build`.
+5. `php artisan optimize` (config/route/event cache). Skip `view:cache` until after Filament discover runs once.
+6. Ensure HTTPS is terminated upstream — `SecurityHeaders` middleware adds HSTS automatically when the request is HTTPS in `production`.
+7. Run the legacy import once (`canela:import --images=…`); the command is idempotent under `--fresh`.
+8. The Filament admin is throttled to 300 requests/minute per IP; `/pesquisa` is throttled to 60/minute.
+
 ## Known follow-ups
 
 - **Inline content image URLs** — legacy content is sanitized (HTML entities decoded, absolute `canelaegengibre.pt` host stripped), and the actual image files are moved into the spatie `content` media collection (served under `/storage/images/…`). However, the HTML body of each article still references the legacy-style paths (`/uploads/media/images/…`), which now 404. A second pass to rewrite each inline `<img src>` to the new spatie media URL per article is TODO.
-- **Search** — the header search input is visual-only right now (no backend). A small endpoint with Scout (or a simple LIKE query) could ship next.
 - **Comments** — intentionally not implemented (not in the legacy data, not requested).
-- **Multilingual tag/category slugs in production URLs** — already supported by the schema and routes; only needs the translation command to have run against them.
+- **pt-BR / en locales** — wired end-to-end but disabled in `config/canela.php` for v1; flip `enabled => true` per locale to ship them. The translation command and routes are already in place.
+- **FULLTEXT search** — current search uses LIKE. Drop in a MySQL FULLTEXT index on `article_translations(title, excerpt)` once content volume justifies it.
 
 ---
 
