@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\User;
 use App\Services\Translation\ClaudeTranslator;
 use App\Services\Translation\TranslatorContract;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -33,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Paginator::defaultView('pagination.canela');
+
         Gate::before(function (User $user): ?bool {
             return $user->hasRole('super-admin') ? true : null;
         });

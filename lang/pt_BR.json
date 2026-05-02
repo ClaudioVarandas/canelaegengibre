@@ -8,14 +8,17 @@
     "Featured": "Destaque",
     "Latest": "Mais recentes",
     "Latest articles in :category": "Últimos artigos em :category",
+    "Next": "Próximo",
+    "No articles tagged here yet.": "Ainda não há artigos com esta tag.",
     "No results for \":query\".": "Sem resultados para “:query”.",
+    "Pagination": "Paginação",
+    "Previous": "Anterior",
     "Read article": "Ler artigo",
     "Search": "Buscar",
     "Search articles": "Buscar artigos",
     "Search recipes, ideas…": "Buscar receitas, ideias…",
     "See all in this category": "Ver todos da categoria",
     "Tag": "Tag",
-    "No articles tagged here yet.": "Ainda não há artigos com esta tag.",
     "Type a query above to find articles.": "Digite um termo acima para encontrar artigos.",
     ":count result for \":query\"|:count results for \":query\"": ":count resultado para “:query”|:count resultados para “:query”"
 }
