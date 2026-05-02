@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
@@ -113,8 +114,17 @@ class ArticleForm
             Textarea::make($prefix.'excerpt')
                 ->rows(3)
                 ->maxLength(1000),
-            Textarea::make($prefix.'content')
-                ->rows(16)
+            RichEditor::make($prefix.'content')
+                ->fileAttachmentsDisk('public')
+                ->fileAttachmentsDirectory('articles/inline')
+                ->fileAttachmentsVisibility('public')
+                ->toolbarButtons([
+                    ['bold', 'italic', 'strike', 'link'],
+                    ['h2', 'h3'],
+                    ['bulletList', 'orderedList', 'blockquote'],
+                    ['attachFiles'],
+                    ['undo', 'redo'],
+                ])
                 ->columnSpanFull(),
             TextInput::make($prefix.'meta_title')
                 ->label('SEO title')
