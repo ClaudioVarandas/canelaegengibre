@@ -9,15 +9,15 @@
     <section class="mx-auto mt-12 max-w-7xl px-6">
         <div class="grid gap-2 lg:grid-cols-[3fr_2fr]">
             {{-- Left: featured article --}}
-            @if ($heroMain)
-                @php
-                    $heroT = $heroMain->translate(app()->getLocale());
-                    $heroCover = $heroMain->coverUrl();
-                @endphp
-                <a href="{{ locale_route('articles.show', $heroT?->slug) }}"
+            @php
+                $heroT = $heroMain?->translate(app()->getLocale());
+                $heroCover = $heroMain?->coverUrl();
+            @endphp
+            @if ($heroMain && $heroT)
+                <a href="{{ locale_route('articles.show', $heroT->slug) }}"
                    class="group relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-cinnamon via-cinnamon/90 to-ink p-8 text-oat sm:p-10 lg:aspect-auto lg:h-[400px]">
                     @if ($heroCover)
-                        <img src="{{ $heroCover }}" alt="{{ $heroT?->title }}"
+                        <img src="{{ $heroCover }}" alt="{{ $heroT->title }}"
                              class="absolute inset-0 h-full w-full object-cover opacity-25 mix-blend-overlay transition duration-1000 group-hover:scale-105 group-hover:opacity-30">
                     @endif
                     <div class="relative">
@@ -27,9 +27,9 @@
                     </div>
                     <div class="relative">
                         <h1 class="font-display text-4xl leading-tight sm:text-5xl">
-                            {{ $heroT?->title }}
+                            {{ $heroT->title }}
                         </h1>
-                        @if ($heroT?->excerpt)
+                        @if ($heroT->excerpt)
                             <p class="mt-5 max-w-xl text-base text-oat/80">
                                 {{ Str::limit(strip_tags($heroT->excerpt), 160) }}
                             </p>

@@ -16,10 +16,12 @@ final class HomeController extends Controller
         $locale = app()->getLocale();
 
         $translations = fn ($q) => $q->where('locale', $locale);
+        $hasTranslation = fn ($q) => $q->whereHas('translations', $translations);
 
         $heroMain = Article::query()
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
+            ->tap($hasTranslation)
             ->with(['translations' => $translations, 'category.translations' => $translations, 'media'])
             ->orderByDesc('featured')
             ->orderByDesc('published_at')
@@ -28,6 +30,7 @@ final class HomeController extends Controller
         $heroRight = Article::query()
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
+            ->tap($hasTranslation)
             ->when($heroMain, fn ($q) => $q->whereKeyNot($heroMain->id))
             ->with(['translations' => $translations, 'category.translations' => $translations, 'media'])
             ->orderByDesc('published_at')
@@ -39,10 +42,11 @@ final class HomeController extends Controller
             ->with(['translations' => $translations])
             ->get();
 
-        $categoryArticles = $rootCategories->mapWithKeys(function (Category $category) use ($translations, $locale): array {
+        $categoryArticles = $rootCategories->mapWithKeys(function (Category $category) use ($translations, $hasTranslation, $locale): array {
             $articles = $category->articles()
                 ->where('status', ArticleStatus::Published)
                 ->where('published_at', '<=', now())
+                ->tap($hasTranslation)
                 ->with(['translations' => $translations, 'media'])
                 ->orderByDesc('published_at')
                 ->limit(4)
@@ -60,6 +64,7 @@ final class HomeController extends Controller
         $carousel = Article::query()
             ->where('status', ArticleStatus::Published)
             ->where('published_at', '<=', now())
+            ->tap($hasTranslation)
             ->with(['translations' => $translations, 'media'])
             ->orderByDesc('published_at')
             ->limit(10)
