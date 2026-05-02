@@ -12,6 +12,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -110,12 +111,23 @@ class TranslateArticles extends Command
             }
 
             if (! $dryRun) {
-                foreach ($translated as $locale => $attrs) {
-                    $attrs['slug'] = $this->uniqueSlug($translationModel, $attrs['slug'] ?? null, $attrs[array_key_first($attrs)] ?? '', $locale);
-                    $record->translations()->updateOrCreate(
-                        ['locale' => $locale],
-                        $attrs,
-                    );
+                try {
+                    DB::transaction(function () use ($record, $translated, $translationModel): void {
+                        foreach ($translated as $locale => $attrs) {
+                            $attrs['slug'] = $this->uniqueSlug($translationModel, $attrs['slug'] ?? null, $attrs[array_key_first($attrs)] ?? '', $locale);
+                            $record->translations()->updateOrCreate(
+                                ['locale' => $locale],
+                                $attrs,
+                            );
+                        }
+                    });
+                } catch (Throwable $e) {
+                    $stats['failed']++;
+                    $this->newLine();
+                    $this->error("{$entity}#{$record->id}: persist failed: {$e->getMessage()}");
+                    $progress->advance();
+
+                    continue;
                 }
             }
 
