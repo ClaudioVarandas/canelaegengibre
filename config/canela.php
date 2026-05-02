@@ -12,6 +12,7 @@ return [
             'articles_path' => 'artigos',
             'categories_path' => 'categorias',
             'about_path' => 'sobre',
+            'search_path' => 'pesquisa',
         ],
         'pt_BR' => [
             'label' => 'Português (BR)',
@@ -19,6 +20,7 @@ return [
             'articles_path' => 'artigos',
             'categories_path' => 'categorias',
             'about_path' => 'sobre',
+            'search_path' => 'busca',
         ],
         'en' => [
             'label' => 'English',
@@ -26,6 +28,7 @@ return [
             'articles_path' => 'articles',
             'categories_path' => 'category',
             'about_path' => 'about',
+            'search_path' => 'search',
         ],
     ],
 ];

@@ -26,13 +26,30 @@
 
         <div class="flex items-center gap-3">
             <x-locale-switcher />
-            <button type="button" aria-label="Search" class="btn btn-ghost btn-circle btn-sm">
+
+            <form method="GET" action="{{ locale_route('search') }}"
+                  class="hidden md:flex" role="search">
+                <label class="input input-sm input-bordered flex items-center gap-2 bg-oat/80">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-60" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m21 21-4.3-4.3" />
+                    </svg>
+                    <input type="search" name="q"
+                           placeholder="{{ __('Search recipes, ideas…') }}"
+                           aria-label="{{ __('Search') }}"
+                           class="grow bg-transparent w-44">
+                </label>
+            </form>
+
+            <a href="{{ locale_route('search') }}" aria-label="{{ __('Search') }}"
+               class="btn btn-ghost btn-circle btn-sm md:hidden">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2">
+                     stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <circle cx="11" cy="11" r="7" />
                     <path d="m21 21-4.3-4.3" />
                 </svg>
-            </button>
+            </a>
         </div>
     </div>
 </header>

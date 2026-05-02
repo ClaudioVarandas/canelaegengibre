@@ -6,6 +6,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
 use App\Models\Redirect as LegacyRedirect;
 use Illuminate\Http\Request;
@@ -24,16 +25,18 @@ foreach (config('canela.locales') as $locale => $meta) {
     $articlesPath = $meta['articles_path'];
     $categoriesPath = $meta['categories_path'];
     $aboutPath = $meta['about_path'];
+    $searchPath = $meta['search_path'];
 
     Route::middleware(['set-locale:'.$locale, 'cache-public:600'])
         ->prefix($segment)
         ->name(str_replace('_', '-', strtolower($locale)).'.')
-        ->group(function () use ($articlesPath, $categoriesPath, $aboutPath): void {
+        ->group(function () use ($articlesPath, $categoriesPath, $aboutPath, $searchPath): void {
             Route::get('/', [HomeController::class, 'index'])->name('home');
             Route::get($articlesPath, [ArticleController::class, 'index'])->name('articles.index');
             Route::get($articlesPath.'/{slug}', [ArticleController::class, 'show'])->name('articles.show');
             Route::get($categoriesPath.'/{slug}', [CategoryController::class, 'show'])->name('categories.show');
             Route::get($aboutPath, [AboutController::class, 'index'])->name('about');
+            Route::get($searchPath, [SearchController::class, 'index'])->name('search');
         });
 }
 

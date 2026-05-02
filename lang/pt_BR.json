@@ -6,8 +6,13 @@
     "Category": "Categoria",
     "Explore by category": "Explorar por categoria",
     "Latest": "Mais recentes",
+    "No results for \":query\".": "Sem resultados para “:query”.",
     "Our story": "Nossa história",
+    "Search": "Buscar",
+    "Search articles": "Buscar artigos",
     "Search recipes, ideas…": "Buscar receitas, ideias…",
     "See all": "Ver todos",
-    "We write about honest recipes, seasonal tables, and the small rituals that make a home.": "Escrevemos sobre receitas honestas, mesas sazonais e os pequenos rituais que fazem de uma casa um lar."
+    "Type a query above to find articles.": "Digite um termo acima para encontrar artigos.",
+    "We write about honest recipes, seasonal tables, and the small rituals that make a home.": "Escrevemos sobre receitas honestas, mesas sazonais e os pequenos rituais que fazem de uma casa um lar.",
+    ":count result for \":query\"|:count results for \":query\"": ":count resultado para “:query”|:count resultados para “:query”"
 }
