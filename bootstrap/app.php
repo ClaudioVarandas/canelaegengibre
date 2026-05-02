@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\CachePublicResponse;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
 use App\Models\Redirect;
 use Illuminate\Foundation\Application;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'set-locale' => SetLocale::class,
             'cache-public' => CachePublicResponse::class,
         ]);
+        $middleware->append(SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
