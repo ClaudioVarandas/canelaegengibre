@@ -6,7 +6,7 @@
     <x-header :root-categories="$rootCategories" />
 
     {{-- HERO --}}
-    <section class="mx-auto mt-24 max-w-7xl px-6">
+    <section class="mx-auto mt-12 max-w-7xl px-6">
         <div class="grid gap-2 lg:grid-cols-[3fr_2fr]">
             {{-- Left: featured article --}}
             @if ($heroMain)
@@ -52,7 +52,7 @@
 
     {{-- CATEGORIES --}}
     @if ($rootCategories->isNotEmpty())
-        <section class="mx-auto mt-24 max-w-7xl px-6"
+        <section class="mx-auto mt-12 max-w-7xl px-6"
                  x-data="{ active: {{ (int) $rootCategories->first()->id }} }">
             <h2 class="font-display text-3xl text-ink">{{ __('Explore by category') }}</h2>
 
@@ -104,7 +104,7 @@
 
     {{-- LATEST CAROUSEL --}}
     @if ($carousel->isNotEmpty())
-        <section class="mx-auto mt-24 max-w-7xl px-6"
+        <section class="mx-auto mt-12 mb-12 max-w-7xl px-6"
                  x-data="{
                      active: 0,
                      pages: 1,
