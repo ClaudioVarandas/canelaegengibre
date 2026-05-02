@@ -8,7 +8,7 @@
 
 @if ($t)
 <a href="{{ locale_route('articles.show', $t->slug) }}"
-   class="group flex {{ $compact ? 'items-center gap-4 p-4' : 'flex-col gap-4 p-4' }} rounded-2xl border border-ink/5 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+   class="group flex {{ $compact ? 'items-center gap-4 p-4' : 'flex-col gap-4 p-4' }} rounded-2xl bg-white shadow-[0_8px_24px_-12px_rgba(31,41,55,0.18)] ring-1 ring-ink/5 transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-16px_rgba(31,41,55,0.28)]">
     <div class="{{ $compact ? 'h-16 w-16 shrink-0 rounded-xl' : 'aspect-square w-full rounded-2xl' }} overflow-hidden bg-sand">
         @if ($cover)
             <img src="{{ $cover }}" alt="{{ $t->title }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
