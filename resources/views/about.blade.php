@@ -7,8 +7,8 @@
 
     <main class="mx-auto max-w-3xl px-6 py-20" data-locale="{{ app()->getLocale() }}">
         <header class="mb-10 text-center">
-            <p class="text-sm uppercase tracking-widest text-cinnamon">{{ __('Our story') }}</p>
-            <h1 class="mt-2 font-display text-5xl text-ink">{{ __('About') }}</h1>
+            <p class="text-sm uppercase tracking-widest text-cinnamon">Sobre</p>
+            <h1 class="mt-2 font-display text-5xl text-ink">Carla Cerqueira</h1>
         </header>
 
         <figure class="mx-auto mb-12 w-48">
