@@ -16,7 +16,7 @@
                  class="h-48 w-48 rounded-full object-cover shadow-soft ring-1 ring-ink/10">
         </figure>
 
-        <div class="prose prose-lg max-w-none text-ink/80">
+        <div class="space-y-8 text-xl leading-relaxed text-ink/80">
             <p>Sou a Carla Cerqueira, licenciada em Comunicação Social, apaixonada pela escrita e por tudo o que nos aproxima de uma vida mais equilibrada, consciente e feliz. Durante muito tempo, a alimentação foi apenas uma rotina. Até ao dia em que decidi mudar. Através de uma reeducação alimentar, perdi 40&nbsp;kg e ganhei muito mais do que um novo corpo: ganhei uma nova forma de olhar para mim, para a comida e para o bem-estar.</p>
 
             <p>Foi dessa transformação que nasceu o <em>Canela e Gengibre</em>, um espaço onde junto duas paixões que fazem parte de mim: a escrita e a alimentação saudável. Aqui partilho receitas, sugestões, experiências e pequenas inspirações para quem procura cuidar de si sem complicações, sem extremismos e sem perder o prazer de comer. Porque acredito que uma vida saudável também pode ser saborosa, simples e cheia de cor.</p>
