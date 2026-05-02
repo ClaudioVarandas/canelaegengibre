@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ArticleStatus;
+use App\Models\Concerns\HasLocaleTranslations;
 use Database\Factories\ArticleFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -23,6 +23,7 @@ class Article extends Model implements HasMedia
     /** @use HasFactory<ArticleFactory> */
     use HasFactory;
 
+    use HasLocaleTranslations;
     use InteractsWithMedia;
     use SoftDeletes;
 
@@ -118,9 +119,9 @@ class Article extends Model implements HasMedia
         return $this->belongsToMany(Tag::class);
     }
 
-    public function translations(): HasMany
+    protected function translationModelClass(): string
     {
-        return $this->hasMany(ArticleTranslation::class);
+        return ArticleTranslation::class;
     }
 
     public function translate(string $locale, bool $fallback = true): ?ArticleTranslation

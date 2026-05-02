@@ -14,7 +14,7 @@ arch('controllers live under App\\Http\\Controllers and are named *Controller')
 arch('models live under App\\Models and extend Eloquent')
     ->expect('App\Models')
     ->toExtend('Illuminate\Database\Eloquent\Model')
-    ->ignoring('App\Models\User');
+    ->ignoring(['App\Models\User', 'App\Models\Concerns']);
 
 arch('enums are declared strict')
     ->expect('App\Enums')

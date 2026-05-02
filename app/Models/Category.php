@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasLocaleTranslations;
 use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,8 @@ class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
     use HasFactory;
+
+    use HasLocaleTranslations;
 
     protected $fillable = ['parent_id', 'sort'];
 
@@ -34,15 +37,9 @@ class Category extends Model
         return $this->hasMany(Article::class);
     }
 
-    public function translations(): HasMany
+    protected function translationModelClass(): string
     {
-        return $this->hasMany(CategoryTranslation::class);
-    }
-
-    public function translate(string $locale): ?CategoryTranslation
-    {
-        return $this->translations->firstWhere('locale', $locale)
-            ?? $this->translations->first();
+        return CategoryTranslation::class;
     }
 
     /** @var Collection<int, int>|null */
